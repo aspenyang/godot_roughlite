@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://d1gsm3g6m0pus" path="res://scripts/player.gd" id="1_sugp2"]
 [ext_resource type="Texture2D" uid="uid://c13ntiv557bd7" path="res://assets/female_adventurer_Idle.png" id="2_sugp2"]
 [ext_resource type="Shape2D" uid="uid://cgs60oqox28sv" path="res://assets/collision_circle.tres" id="3_tbgi4"]
-[ext_resource type="Script" uid="uid://bmwx7n8nooqao" path="res://scenes/room_manager.gd" id="4_jyhfs"]
+[ext_resource type="Script" uid="uid://bmwx7n8nooqao" path="res://scripts/room_manager.gd" id="4_jyhfs"]
 
 [node name="Main" type="Node2D"]
 

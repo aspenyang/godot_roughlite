@@ -4,7 +4,7 @@ var speed = 300  # Movement speed in pixels/second
 var sprint_speed = 600 
 var movement = Vector2.ZERO
 
-func _physics_process(delta):
+func _physics_process(_delta):
 	# Get input direction
 	movement = Vector2.ZERO
 	if Input.is_action_pressed("ui_right"):
