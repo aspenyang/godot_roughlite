@@ -12,7 +12,7 @@ func _ready():
 	if prompt_label:
 		prompt_label.visible = false
 
-func _process(delta):
+func _process(_delta):
 	if exit_enabled and player_in_range and Input.is_action_just_pressed(interaction_key):
 		emit_signal("exit_triggered")
 
