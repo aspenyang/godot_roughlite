@@ -9,6 +9,21 @@ const TOTAL_ROOMS: int = 8
 var maze_used := false
 var reward_used := false
 
+var miniboss_count := 0
+const MAX_MINIBOSS := 2
+
+# Paths for layouts
+var mob_rooms := [
+	"res://scenes/rooms/combat_mob_01.tscn",
+	"res://scenes/rooms/combat_mob_02.tscn",
+	"res://scenes/rooms/combat_mob_03.tscn"
+]
+
+var miniboss_rooms := [
+	"res://scenes/rooms/combat_miniboss_01.tscn",
+	"res://scenes/rooms/combat_miniboss_02.tscn"
+]
+
 # Room weights (out of 100)
 var room_weights := {
 	"combat": 60,
@@ -26,7 +41,7 @@ func _on_room_completed():
 func load_next_room():
 	if current_room:
 		current_room.queue_free()
-		
+	
 	var room_scene: PackedScene
 
 	# Final boss room
@@ -41,7 +56,7 @@ func load_next_room():
 
 	match room_type:
 		"combat":
-			scene_path = "res://scenes/rooms/combat_mob_01.tscn"
+			scene_path = choose_combat_layout()
 		"maze":
 			scene_path = "res://scenes/rooms/maze.tscn"
 			maze_used = true
@@ -88,3 +103,32 @@ func choose_next_room_type() -> String:
 		return "combat"  # fallback
 		
 	return choices[randi() % choices.size()]
+
+# 🔥 Combat layout selection with miniboss rules
+func choose_combat_layout() -> String:
+	var level = rooms_completed + 1
+	var pool: Array[String] = []
+
+	var miniboss_allowed = level >= 3 and level <= TOTAL_ROOMS - 2 and miniboss_count < MAX_MINIBOSS
+
+	if miniboss_allowed:
+		# 12% per layout (3 mobs + 2 miniboss)
+		for room_path in mob_rooms:
+			for i in range(12):
+				pool.append(room_path)
+		for room_path in miniboss_rooms:
+			for i in range(12):
+				pool.append(room_path)
+	else:
+		# 20% per mob layout
+		for room_path in mob_rooms:
+			for i in range(20):
+				pool.append(room_path)
+
+	var chosen = pool[randi() % pool.size()]
+
+	# Track miniboss usage
+	if miniboss_rooms.has(chosen):
+		miniboss_count += 1
+
+	return chosen

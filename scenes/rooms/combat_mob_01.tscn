@@ -1,11 +1,12 @@
-[gd_scene load_steps=8 format=3 uid="uid://ufrc13r4er5y"]
+[gd_scene load_steps=9 format=3 uid="uid://dgyrwps4kbba1"]
 
-[ext_resource type="Texture2D" uid="uid://djf70ea8wt55s" path="res://assets/world_tileset.png" id="1_ecupy"]
-[ext_resource type="Script" uid="uid://ni1mvhrlqstc" path="res://scripts/door.gd" id="2_3qim3"]
-[ext_resource type="Texture2D" uid="uid://cnwo8hn31uj6f" path="res://assets/rogueliketilesx3_JoeCreates.png" id="3_cf5c1"]
+[ext_resource type="Texture2D" uid="uid://djf70ea8wt55s" path="res://assets/world_tileset.png" id="1_hswhe"]
+[ext_resource type="Script" uid="uid://ni1mvhrlqstc" path="res://scripts/door.gd" id="2_7xa45"]
+[ext_resource type="Texture2D" uid="uid://cnwo8hn31uj6f" path="res://assets/rogueliketilesx3_JoeCreates.png" id="3_6f7ss"]
+[ext_resource type="Script" uid="uid://dx8bipfjoh4e" path="res://scripts/exit.gd" id="4_7xa45"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_3k6cr"]
-texture = ExtResource("1_ecupy")
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_tsb2o"]
+texture = ExtResource("1_hswhe")
 0:0/0 = 0
 1:0/0 = 0
 2:0/0 = 0
@@ -136,24 +137,24 @@ texture = ExtResource("1_ecupy")
 2:15/0 = 0
 3:15/0 = 0
 
-[sub_resource type="TileSet" id="TileSet_t8881"]
+[sub_resource type="TileSet" id="TileSet_7jfmm"]
 physics_layer_0/collision_layer = 1
-sources/0 = SubResource("TileSetAtlasSource_3k6cr")
+sources/0 = SubResource("TileSetAtlasSource_tsb2o")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_o2rni"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hswhe"]
 
-[node name="final_boss" type="Node2D"]
+[node name="combat_mob_01" type="Node2D"]
 
 [node name="TileMap" type="TileMap" parent="."]
-tile_set = SubResource("TileSet_t8881")
+tile_set = SubResource("TileSet_7jfmm")
 format = 2
 layer_0/tile_data = PackedInt32Array(0, 393216, 1, 1, 393216, 1, 2, 393216, 1, 3, 393216, 1, 4, 393216, 1, 5, 393216, 1, 6, 393216, 1, 7, 393216, 1, 8, 393216, 1, 9, 393216, 1, 10, 393216, 1, 11, 393216, 1, 12, 393216, 1, 15, 393216, 1, 16, 393216, 1, 17, 393216, 1, 18, 393216, 1, 19, 393216, 1, 655360, 393216, 1, 589824, 393216, 1, 524288, 393216, 1, 458752, 393216, 1, 393216, 393216, 1, 327680, 393216, 1, 262144, 393216, 1, 196608, 393216, 1, 131072, 393216, 1, 65536, 393216, 1, 20, 393216, 1, 21, 393216, 1, 22, 393216, 1, 23, 393216, 1, 24, 393216, 1, 25, 393216, 1, 26, 393216, 1, 65562, 393216, 1, 131098, 393216, 1, 196634, 393216, 1, 262170, 393216, 1, 327706, 393216, 1, 393242, 393216, 1, 458778, 393216, 1, 524314, 393216, 1, 589850, 393216, 1, 655386, 393216, 1, 720922, 393216, 1, 720896, 393216, 1, 720897, 393216, 1, 720898, 393216, 1, 720899, 393216, 1, 720900, 393216, 1, 720901, 393216, 1, 720902, 393216, 1, 720903, 393216, 1, 720904, 393216, 1, 720905, 393216, 1, 720906, 393216, 1, 720907, 393216, 1, 720911, 393216, 1, 720912, 393216, 1, 720913, 393216, 1, 720914, 393216, 1, 720915, 393216, 1, 720916, 393216, 1, 720917, 393216, 1, 720918, 393216, 1, 720919, 393216, 1, 720920, 393216, 1, 720921, 393216, 1, 720908, 393216, 1)
 
 [node name="Door" type="Area2D" parent="."]
 position = Vector2(222, 173)
-script = ExtResource("2_3qim3")
+script = ExtResource("2_7xa45")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Door"]
 position = Vector2(4, 3)
@@ -161,7 +162,7 @@ shape = SubResource("RectangleShape2D_o2rni")
 
 [node name="Sprite2D" type="Sprite2D" parent="Door"]
 position = Vector2(4, 3)
-texture = ExtResource("3_cf5c1")
+texture = ExtResource("3_6f7ss")
 region_enabled = true
 region_rect = Rect2(77.7966, 0.541828, 21.9258, 23.7919)
 
@@ -170,18 +171,29 @@ position = Vector2(226, 146)
 
 [node name="Exit" type="Area2D" parent="."]
 position = Vector2(225, 15)
+script = ExtResource("4_7xa45")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Exit"]
 shape = SubResource("RectangleShape2D_hswhe")
 
 [node name="Sprite2D" type="Sprite2D" parent="Exit"]
-texture = ExtResource("3_cf5c1")
+texture = ExtResource("3_6f7ss")
 region_enabled = true
 region_rect = Rect2(51.6794, 0.670513, 22.8589, 25.6579)
 
+[node name="Label" type="Label" parent="Exit"]
+offset_left = 16.0
+offset_top = 4.0
+offset_right = 97.0
+offset_bottom = 27.0
+text = "Press E"
+
 [node name="Label" type="Label" parent="."]
-offset_left = 6.0
+offset_left = 1.0
 offset_top = 193.0
-offset_right = 46.0
+offset_right = 124.0
 offset_bottom = 216.0
-text = "final"
+text = "Combat mob 01"
+
+[connection signal="body_entered" from="Exit" to="Exit" method="_on_body_entered"]
+[connection signal="body_exited" from="Exit" to="Exit" method="_on_body_exited"]
