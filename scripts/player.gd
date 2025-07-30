@@ -4,6 +4,9 @@ var speed = 300  # Movement speed in pixels/second
 var sprint_speed = 600 
 var movement = Vector2.ZERO
 
+func _ready() -> void:
+	Globals.player = $"."
+
 func _physics_process(_delta):
 	# Get input direction
 	movement = Vector2.ZERO
@@ -27,3 +30,9 @@ func _physics_process(_delta):
 	# Apply movement
 	velocity = movement
 	move_and_slide()
+	
+func flash_hit():
+	if $Sprite2D:
+		$Sprite2D.modulate = Color.RED
+		await get_tree().create_timer(0.2).timeout
+		$Sprite2D.modulate = Color.WHITE

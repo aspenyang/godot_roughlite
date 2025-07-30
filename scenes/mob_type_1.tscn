@@ -1,24 +1,69 @@
-[gd_scene load_steps=4 format=3 uid="uid://dvl33tt8b3lpn"]
+[gd_scene load_steps=8 format=3 uid="uid://dvl33tt8b3lpn"]
 
-[ext_resource type="Script" uid="uid://cdxoewux2nxde" path="res://scripts/mob_type_1.gd" id="1_6rskg"]
+[ext_resource type="Script" uid="uid://boo0yvjsbqn14" path="res://scripts/mob_type_1_improved.gd" id="1_2jfud"]
 [ext_resource type="Texture2D" uid="uid://vf6by4yfxx8r" path="res://assets/Orc.png" id="2_2jfud"]
+[ext_resource type="Texture2D" uid="uid://3pprb4txpjr" path="res://assets/Orc-Attack01.png" id="3_2jfud"]
+
+[sub_resource type="Animation" id="Animation_bq4yf"]
+resource_name = "attack"
+length = 0.5
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [ExtResource("3_2jfud"), ExtResource("2_2jfud")]
+}
+
+[sub_resource type="Animation" id="Animation_r1ups"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("2_2jfud")]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_xhyai"]
+_data = {
+&"RESET": SubResource("Animation_r1ups"),
+&"attack": SubResource("Animation_bq4yf")
+}
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bq4yf"]
 size = Vector2(24, 24)
 
 [node name="MobType1" type="Node2D"]
 
-[node name="CharacterBody2D" type="CharacterBody2D" parent="."]
+[node name="Melee" type="CharacterBody2D" parent="."]
 position = Vector2(8, 8)
-script = ExtResource("1_6rskg")
+script = ExtResource("1_2jfud")
 
-[node name="Sprite2D" type="Sprite2D" parent="CharacterBody2D"]
+[node name="Sprite2D" type="Sprite2D" parent="Melee"]
 position = Vector2(4, -4)
-scale = Vector2(1.09091, 1.09091)
+scale = Vector2(0.962963, 0.962963)
 texture = ExtResource("2_2jfud")
 region_enabled = true
-region_rect = Rect2(43.296, 38.2696, 22.4317, 22.0263)
+region_rect = Rect2(346.275, 35.3049, 27.4693, 27.4584)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Melee/Sprite2D"]
+root_node = NodePath("../..")
+libraries = {
+&"": SubResource("AnimationLibrary_xhyai")
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Melee"]
 position = Vector2(4, -4)
 shape = SubResource("RectangleShape2D_bq4yf")
