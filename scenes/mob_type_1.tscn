@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://dvl33tt8b3lpn"]
+
+[ext_resource type="Script" uid="uid://cdxoewux2nxde" path="res://scripts/mob_type_1.gd" id="1_6rskg"]
+[ext_resource type="Texture2D" uid="uid://vf6by4yfxx8r" path="res://assets/Orc.png" id="2_2jfud"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bq4yf"]
+size = Vector2(24, 24)
+
+[node name="MobType1" type="Node2D"]
+
+[node name="CharacterBody2D" type="CharacterBody2D" parent="."]
+position = Vector2(8, 8)
+script = ExtResource("1_6rskg")
+
+[node name="Sprite2D" type="Sprite2D" parent="CharacterBody2D"]
+position = Vector2(4, -4)
+scale = Vector2(1.09091, 1.09091)
+texture = ExtResource("2_2jfud")
+region_enabled = true
+region_rect = Rect2(43.296, 38.2696, 22.4317, 22.0263)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
+position = Vector2(4, -4)
+shape = SubResource("RectangleShape2D_bq4yf")
