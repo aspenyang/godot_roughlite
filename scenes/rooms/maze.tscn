@@ -1,11 +1,12 @@
-[gd_scene load_steps=9 format=3 uid="uid://cxo8imu6jvdeg"]
+[gd_scene load_steps=10 format=3 uid="uid://cxo8imu6jvdeg"]
 
 [ext_resource type="Texture2D" uid="uid://djf70ea8wt55s" path="res://assets/world_tileset.png" id="1_6tgpx"]
+[ext_resource type="Script" uid="uid://dx3vmydlatrt7" path="res://scripts/maze.gd" id="1_x7lgj"]
 [ext_resource type="Script" uid="uid://dx8bipfjoh4e" path="res://scripts/exit.gd" id="2_byo5q"]
 [ext_resource type="Script" uid="uid://ni1mvhrlqstc" path="res://scripts/door.gd" id="2_x7lgj"]
 [ext_resource type="Texture2D" uid="uid://cnwo8hn31uj6f" path="res://assets/rogueliketilesx3_JoeCreates.png" id="3_byo5q"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6tgpx"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_byo5q"]
 texture = ExtResource("1_6tgpx")
 0:0/0 = 0
 1:0/0 = 0
@@ -25,9 +26,7 @@ texture = ExtResource("1_6tgpx")
 3:1/0 = 0
 4:1/0 = 0
 5:1/0 = 0
-5:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 6:1/0 = 0
-6:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 7:1/0 = 0
 8:1/0 = 0
 9:1/0 = 0
@@ -46,7 +45,6 @@ texture = ExtResource("1_6tgpx")
 10:2/0 = 0
 11:2/0 = 0
 0:3/0 = 0
-0:3/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 1:3/0 = 0
 2:3/0 = 0
 5:3/0 = 0
@@ -55,6 +53,7 @@ texture = ExtResource("1_6tgpx")
 8:3/0 = 0
 9:3/0 = 0
 0:4/0 = 0
+0:4/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 1:4/0 = 0
 2:4/0 = 0
 3:4/0 = 0
@@ -138,56 +137,60 @@ texture = ExtResource("1_6tgpx")
 2:15/0 = 0
 3:15/0 = 0
 
-[sub_resource type="TileSet" id="TileSet_dkf7a"]
+[sub_resource type="TileSet" id="TileSet_a5eos"]
 physics_layer_0/collision_layer = 1
-sources/0 = SubResource("TileSetAtlasSource_6tgpx")
+sources/0 = SubResource("TileSetAtlasSource_byo5q")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6tgpx"]
-size = Vector2(23, 26.25)
+size = Vector2(24, 24)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_x7lgj"]
+size = Vector2(24, 24)
 
 [node name="maze" type="Node2D"]
+script = ExtResource("1_x7lgj")
 
-[node name="TileMap" type="TileMap" parent="."]
-tile_set = SubResource("TileSet_dkf7a")
+[node name="maze_paint" type="TileMap" parent="."]
+tile_set = SubResource("TileSet_a5eos")
 format = 2
-layer_0/tile_data = PackedInt32Array(0, 0, 3, 1, 0, 3, 2, 0, 3, 3, 0, 3, 4, 0, 3, 5, 0, 3, 6, 0, 3, 7, 0, 3, 8, 0, 3, 9, 0, 3, 10, 0, 3, 11, 0, 3, 12, 0, 3, 13, 0, 3, 14, 0, 3, 15, 0, 3, 16, 0, 3, 17, 0, 3, 18, 0, 3, 19, 0, 3, 20, 0, 3, 21, 0, 3, 22, 0, 3, 23, 0, 3, 24, 0, 3, 65562, 0, 3, 25, 0, 3, 26, 0, 3, 131098, 0, 3, 196634, 0, 3, 262170, 0, 3, 327706, 0, 3, 393242, 0, 3, 589850, 0, 3, 655386, 0, 3, 720922, 0, 3, 458778, 0, 3, 524314, 0, 3, 917530, 0, 3, 983066, 0, 3, 1048602, 0, 3, 1114138, 0, 3, 1114137, 0, 3, 1114136, 0, 3, 1114135, 0, 3, 1114134, 0, 3, 1114131, 0, 3, 1114130, 0, 3, 1114129, 0, 3, 1114128, 0, 3, 1114127, 0, 3, 1114126, 0, 3, 1114125, 0, 3, 1114120, 0, 3, 1114119, 0, 3, 1114118, 0, 3, 1114117, 0, 3, 1114116, 0, 3, 1114124, 0, 3, 1114123, 0, 3, 1114122, 0, 3, 1114121, 0, 3, 1114115, 0, 3, 1114114, 0, 3, 1114113, 0, 3, 1114112, 0, 3, 65536, 0, 3, 131072, 0, 3, 327680, 0, 3, 393216, 0, 3, 458752, 0, 3, 524288, 0, 3, 589824, 0, 3, 655360, 0, 3, 720896, 0, 3, 786432, 0, 3, 851968, 0, 3, 917504, 0, 3, 983040, 0, 3, 1048576, 0, 3, 1114132, 0, 3, 1114133, 0, 3)
 
 [node name="SpawnPoint" type="Marker2D" parent="."]
+visible = false
 position = Vector2(41, 62)
 
 [node name="Exit" type="Area2D" parent="."]
-position = Vector2(417, 209)
+position = Vector2(408, 208)
 script = ExtResource("2_byo5q")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Exit"]
-position = Vector2(1.5, 0.125)
+position = Vector2(7, -7)
 shape = SubResource("RectangleShape2D_6tgpx")
 
 [node name="Sprite2D" type="Sprite2D" parent="Exit"]
-position = Vector2(3, 0)
+position = Vector2(5.99999, -10)
+scale = Vector2(1.09091, 1.28)
 texture = ExtResource("3_byo5q")
 region_enabled = true
 region_rect = Rect2(51.6794, 0.670513, 22.8589, 25.6579)
 
 [node name="Label" type="Label" parent="Exit"]
-offset_left = 16.0
-offset_top = 4.0
-offset_right = 97.0
-offset_bottom = 27.0
+offset_left = -7.0
+offset_top = 5.0
+offset_right = 74.0
+offset_bottom = 28.0
 text = "Press E"
 
 [node name="Door" type="Area2D" parent="."]
-position = Vector2(14, 62)
+position = Vector2(0, 72)
 script = ExtResource("2_x7lgj")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Door"]
-position = Vector2(-2, 2)
+position = Vector2(9, -7)
 shape = SubResource("RectangleShape2D_x7lgj")
 
 [node name="Sprite2D" type="Sprite2D" parent="Door"]
-position = Vector2(-1, 2)
+position = Vector2(9, -12)
+scale = Vector2(1.14286, 1.3913)
 texture = ExtResource("3_byo5q")
 region_enabled = true
 region_rect = Rect2(77.7966, 0.541828, 21.9258, 23.7919)

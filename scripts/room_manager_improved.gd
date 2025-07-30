@@ -26,8 +26,8 @@ var miniboss_rooms := [
 
 # Room weights (out of 100)
 var room_weights := {
-	"combat": 60,
-	"maze": 20,
+	"combat": 20,
+	"maze": 60,
 	"reward": 20
 }
 

@@ -11,14 +11,14 @@
 script = ExtResource("1_sugp2")
 
 [node name="Sprite2D" type="Sprite2D" parent="Player"]
-position = Vector2(-8.75, -10.0625)
-scale = Vector2(2.05, 1.94141)
+position = Vector2(-0.175, 4.07327)
+scale = Vector2(0.978125, 0.894316)
 texture = ExtResource("2_sugp2")
 region_enabled = true
 region_rect = Rect2(16.294, 18.0009, 16.7943, 27.9904)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
-position = Vector2(-9, -10)
+position = Vector2(0, 8)
 shape = ExtResource("3_tbgi4")
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
