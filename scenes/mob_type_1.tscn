@@ -4,6 +4,21 @@
 [ext_resource type="Texture2D" uid="uid://vf6by4yfxx8r" path="res://assets/Orc.png" id="2_2jfud"]
 [ext_resource type="Texture2D" uid="uid://3pprb4txpjr" path="res://assets/Orc-Attack01.png" id="3_2jfud"]
 
+[sub_resource type="Animation" id="Animation_r1ups"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("2_2jfud")]
+}
+
 [sub_resource type="Animation" id="Animation_bq4yf"]
 resource_name = "attack"
 length = 0.5
@@ -19,21 +34,6 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [ExtResource("3_2jfud"), ExtResource("2_2jfud")]
-}
-
-[sub_resource type="Animation" id="Animation_r1ups"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:texture")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [ExtResource("2_2jfud")]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_xhyai"]

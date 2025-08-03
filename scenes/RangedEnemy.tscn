@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=3 uid="uid://cki2s0gx4qmqa"]
+
+[ext_resource type="Texture2D" uid="uid://bk3cobpho6krw" path="res://assets/slime_green.png" id="1_dfo0x"]
+[ext_resource type="Script" uid="uid://bjafqlm80q6o" path="res://scripts/ranged_enemy.gd" id="1_wltc5"]
+[ext_resource type="PackedScene" uid="uid://dkhsf2h6qud7g" path="res://scenes/bomb.tscn" id="2_k7el5"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wltc5"]
+size = Vector2(24, 22)
+
+[node name="RangedEnemy" type="CharacterBody2D"]
+script = ExtResource("1_wltc5")
+bomb_scene = ExtResource("2_k7el5")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(4.75, -5)
+scale = Vector2(1.73077, 1.83333)
+texture = ExtResource("1_dfo0x")
+region_enabled = true
+region_rect = Rect2(77.1436, 10.8885, 13.5029, 12.8937)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(5, -4)
+shape = SubResource("RectangleShape2D_wltc5")
+
+[node name="AttackTimer" type="Timer" parent="."]
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://dgyrwps4kbba1"]
+[gd_scene load_steps=12 format=3 uid="uid://dgyrwps4kbba1"]
 
 [ext_resource type="Texture2D" uid="uid://djf70ea8wt55s" path="res://assets/world_tileset.png" id="1_hswhe"]
 [ext_resource type="Script" uid="uid://dhwgdq0jfryl5" path="res://scripts/combat_mob_01.gd" id="1_rqlfc"]
@@ -147,6 +147,11 @@ sources/0 = SubResource("TileSetAtlasSource_tsb2o")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hswhe"]
 
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_ncu8i"]
+vertices = PackedVector2Array(404.93, 27.9375, 404.063, 164, 27.0625, 164, 27.9297, 26.0469)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(18, 16, 17, 174, 414, 174, 415, 18)])
+
 [node name="combat_mob_01" type="Node2D"]
 script = ExtResource("1_rqlfc")
 enemy_scene = ExtResource("2_ncu8i")
@@ -198,6 +203,9 @@ offset_top = 193.0
 offset_right = 124.0
 offset_bottom = 216.0
 text = "Combat mob 01"
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("NavigationPolygon_ncu8i")
 
 [connection signal="body_entered" from="Exit" to="Exit" method="_on_body_entered"]
 [connection signal="body_exited" from="Exit" to="Exit" method="_on_body_exited"]
