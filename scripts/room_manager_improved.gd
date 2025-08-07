@@ -264,15 +264,16 @@ func generate_combat():
 		# West
 		if Vector2(pos.x - 1, pos.y) in room_layout:
 			unit.west_pass()
-		# North
+		# North (If the north room is the base, not connect)
 		if Vector2(pos.x, pos.y - 1) in room_layout and Vector2(pos.x, pos.y - 1) != Vector2(0, 0):
 			unit.north_pass()
-		# East
+		# East (If the east room is the base, not connect)
 		if Vector2(pos.x + 1, pos.y) in room_layout and Vector2(pos.x + 1, pos.y) != Vector2(0, 0):
 			unit.east_pass()
 		# Place
 		unit.position = pos * 320
 		
+		# Place exit door
 		if not if_exit and unit.get_node("NorthWall").visible:
 			exit_door.visible = true
 			if_exit = true
