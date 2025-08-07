@@ -247,7 +247,11 @@ func generate_combat():
 	if Vector2(1, 0) in room_layout:
 		base.east_pass()
 	
-	var if_exit = false
+	var if_exit = false # for activate exit
+	
+	var melee = preload("res://scenes/melee.tscn")
+	var ranged_enemy = preload("res://scenes/RangedEnemy.tscn")
+	var enemy_pool = [melee,ranged_enemy]
 	
 	for i in range(room_layout.size()-1, 0, -1):
 		var pos = room_layout[i]
@@ -270,7 +274,10 @@ func generate_combat():
 		# East (If the east room is the base, not connect)
 		if Vector2(pos.x + 1, pos.y) in room_layout and Vector2(pos.x + 1, pos.y) != Vector2(0, 0):
 			unit.east_pass()
-		# Place
+			
+		# Spawn enemies (skip base room, which is at index 0 in the loop range)
+		spawn_enemies_in_room(unit, enemy_pool)
+		# Place the room
 		unit.position = pos * 320
 		
 		# Place exit door
@@ -278,6 +285,43 @@ func generate_combat():
 			exit_door.visible = true
 			if_exit = true
 		
+
+		
 		level_container.add_child(unit)
 	
 	return level_container
+
+func spawn_enemies_in_room(room: Node2D, enemy_pool: Array):
+	var room_width = 256
+	var room_height = 256
+	var margin = 64
+	var min_distance = 32
+	
+	var enemy_count = randi_range(2, 3)
+	
+	var spawn_positions = []
+	
+	for i in range(enemy_count):
+		var enemy = enemy_pool[randi() % enemy_pool.size()].instantiate()
+		var valid_position = false
+		var attempts = 0
+		var random_pos = Vector2.ZERO
+		
+		# Try to find a valid position
+		while not valid_position and attempts < 15:
+			random_pos.x = randf_range(0 + margin, room_width - margin)
+			random_pos.y = randf_range(0 + margin, room_height - margin)
+		
+		# Check distance from other enemies
+			valid_position = true
+			for pos in spawn_positions:
+				if random_pos.distance_to(pos) < min_distance:
+					valid_position = false
+					break
+			
+			attempts += 1
+		
+		enemy.position = random_pos
+		spawn_positions.append(random_pos)
+		room.add_child(enemy)
+	

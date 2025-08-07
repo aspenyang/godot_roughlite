@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://7idg65p6i7cv"]
+[gd_scene load_steps=11 format=3 uid="uid://7idg65p6i7cv"]
 
 [ext_resource type="Script" uid="uid://ni1mvhrlqstc" path="res://scripts/door.gd" id="1_krtpd"]
 [ext_resource type="Script" uid="uid://cpxfvodj1o0i4" path="res://scripts/level_map.gd" id="1_qn2oc"]
@@ -148,6 +148,11 @@ sources/1 = SubResource("TileSetAtlasSource_i858d")
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ui6ro"]
 size = Vector2(20, 32)
 
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_qn2oc"]
+vertices = PackedVector2Array(230, 230, 26, 230, 26, 26, 230, 26)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(16, 16, 240, 16, 240, 240, 16, 240)])
+
 [node name="LevelMap" type="Node2D"]
 script = ExtResource("1_qn2oc")
 
@@ -242,6 +247,9 @@ text = "Press E"
 
 [node name="SpawnPoint" type="Marker2D" parent="."]
 position = Vector2(128, 216)
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("NavigationPolygon_qn2oc")
 
 [connection signal="body_entered" from="Exit" to="Exit" method="_on_body_entered"]
 [connection signal="body_exited" from="Exit" to="Exit" method="_on_body_exited"]
