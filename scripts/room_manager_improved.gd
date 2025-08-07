@@ -56,7 +56,16 @@ func load_next_room():
 
 	match room_type:
 		"combat":
-			scene_path = choose_combat_layout()
+			#scene_path = choose_combat_layout() #fiexed rooms picking
+			# Use procedural room layout
+			var layout_choice = choose_combat_layout()
+			if layout_choice == "PROCEDURAL":
+				var generated_level = generate_combat()
+				spawn_generated_room(generated_level)
+				rooms_completed += 1
+				return
+			else:
+				scene_path = layout_choice
 		"maze":
 			scene_path = "res://scenes/rooms/maze.tscn"
 			maze_used = true
@@ -83,6 +92,29 @@ func spawn_room(room_scene: PackedScene):
 	# Connect signal
 	var exit_door = room_instance.get_node("Exit")
 	exit_door.connect("exit_triggered", Callable(self, "_on_room_completed"))
+
+
+# For procedural combat room
+func spawn_generated_room(level_container: Node2D):
+	add_child(level_container)
+	current_room = level_container
+	
+	# Move player to base room's spawn point or door
+	var base_room = level_container.get_node("level_room0")  # Assuming base is first
+	if base_room.has_node("SpawnPoint"):
+		player.global_position = base_room.get_node("SpawnPoint").global_position
+	else:
+		print("Warning: No SpawnPoint in this room!")
+		
+	# Connect exit signal from the room with visible exit
+	for child in level_container.get_children():
+		var exit_door = child.get_node("Exit")
+		print(exit_door.visible)
+		if exit_door.visible:
+			exit_door.connect("exit_triggered", Callable(self, "_on_room_completed"))
+			print("connected")
+			break
+
 
 func choose_next_room_type() -> String:
 	var choices = []
@@ -112,18 +144,37 @@ func choose_combat_layout() -> String:
 	var miniboss_allowed = level >= 3 and level <= TOTAL_ROOMS - 2 and miniboss_count < MAX_MINIBOSS
 
 	if miniboss_allowed:
+		# fixed mob rooms
 		# 12% per layout (3 mobs + 2 miniboss)
-		for room_path in mob_rooms:
-			for i in range(12):
-				pool.append(room_path)
+		#for room_path in mob_rooms:
+			#for i in range(12):
+				#pool.append(room_path)
+		#for room_path in miniboss_rooms:
+			#for i in range(12):
+				#pool.append(room_path)
+		
+		# procedural combat room
+		for i in range(24):
+			pool.append("PROCEDURAL")
+		# Add combat_mob_03 only (12% chance)
+		for i in range(12):
+			pool.append(mob_rooms[2])  # combat_mob_03.tscn
+		# Add miniboss rooms (12% each)
 		for room_path in miniboss_rooms:
 			for i in range(12):
 				pool.append(room_path)
+		
 	else:
 		# 20% per mob layout
-		for room_path in mob_rooms:
-			for i in range(20):
-				pool.append(room_path)
+		#for room_path in mob_rooms:
+			#for i in range(20):
+				#pool.append(room_path)
+		# procedural combat room
+		for i in range(40):
+			pool.append("PROCEDURAL")
+		# Add combat_mob_03 only (12% chance)
+		for i in range(20):
+			pool.append(mob_rooms[2])  # combat_mob_03.tscn
 
 	var chosen = pool[randi() % pool.size()]
 
@@ -132,3 +183,93 @@ func choose_combat_layout() -> String:
 		miniboss_count += 1
 
 	return chosen
+	
+# Helper method
+func add_to_set(set_array: Array, pos: Vector2):
+	if not pos in set_array:
+		set_array.append(pos)
+
+# Generate combat level map
+func generate_combat():
+	var room_layout = []
+	
+	# Create parent container
+	var level_container = Node2D.new()
+	level_container.name = "GeneratedLevel"
+	
+	var room_count = randi() % 2 + 6 #there will be 6 or 7 rooms including the base
+	
+	# Place base
+	var base = load("res://scenes/rooms/level_map.tscn").instantiate()
+	base.name = "level_room0"
+	room_layout.append(Vector2(0, 0))
+	base.close_all_paths()
+	base.get_node("Door").visible = true
+
+	#Open path(s)
+	var first_rooms = randi() % 3
+	match first_rooms:
+		0:
+			room_layout.append(Vector2(0, -1))
+			base.north_pass()
+		1:
+			room_layout.append(Vector2(1, 0))
+			base.east_pass()
+		2:
+			room_layout.append(Vector2(0, -1))
+			base.north_pass()
+			room_layout.append(Vector2(1, 0))
+			base.east_pass()
+	
+	level_container.add_child(base)
+	
+	while room_layout.size() < room_count:
+		for i in range(1, room_layout.size()):
+			# South
+			if randf() < 0.25 and room_layout.size() < room_count:
+				add_to_set(room_layout, Vector2(room_layout[i].x, room_layout[i].y + 1))
+			# West
+			if randf() < 0.25 and room_layout.size() < room_count:
+				add_to_set(room_layout, Vector2(room_layout[i].x - 1, room_layout[i].y))
+			# North
+			if randf() < 0.25 and room_layout.size() < room_count:
+				add_to_set(room_layout, Vector2(room_layout[i].x, room_layout[i].y - 1))
+			# East
+			if randf() < 0.25 and room_layout.size() < room_count:
+				add_to_set(room_layout, Vector2(room_layout[i].x + 1, room_layout[i].y))
+	
+	print(room_layout.size()," ", room_count)
+	
+	var if_exit = false
+	
+	for i in range(room_layout.size()-1, 0, -1):
+		var pos = room_layout[i]
+		var unit = load("res://scenes/rooms/level_map.tscn").instantiate()
+		var exit_door = unit.get_node("Exit")
+		exit_door.visible = false
+		var entry = unit.get_node("Door")
+		entry.visible = false
+		unit.name = "level_room%d"%i
+		unit.close_all_paths()
+		# South
+		if Vector2(pos.x, pos.y + 1 ) in room_layout:
+			unit.south_pass()
+		# West
+		if Vector2(pos.x - 1, pos.y) in room_layout:
+			unit.west_pass()
+		# North
+		if Vector2(pos.x, pos.y - 1) in room_layout and Vector2(pos.x, pos.y - 1) != Vector2(0, 0):
+			unit.north_pass()
+		# East
+		if Vector2(pos.x + 1, pos.y) in room_layout and Vector2(pos.x + 1, pos.y) != Vector2(0, 0):
+			unit.east_pass()
+		# Place
+		unit.position = pos * 320
+		
+		if not if_exit and unit.get_node("NorthWall").visible:
+			exit_door.visible = true
+			if_exit = true
+		
+		level_container.add_child(unit)
+	
+	return level_container

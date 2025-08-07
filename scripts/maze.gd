@@ -41,14 +41,6 @@ var start_border: Vector2i
 var end_border: Vector2i
 
 func _ready() -> void:
-	#place_border()
-	#the original code
-	#dfs(starting_coords)
-	#set_entry_and_exit()
-	#change the code to start from the randomly picked start point
-	#set_entry_and_exit()
-	#dfs(starting_pos)
-	#draw_tiles(walls_original, entry_original, exit_original)
 	
 	while true:
 		walls_original.clear()
@@ -154,28 +146,28 @@ func set_entry_and_exit() -> void:
 	var edge = randi() % 4
 	match edge:
 		0: # top edge
-			print("top")
+			#print("top")
 			start_pos = Vector2i(random_even(0, x_dim - 1), 0)
 			#end_pos = Vector2i(random_even(0, x_dim - 1), y_dim - 1)
 			end_pos = Vector2i(x_dim - start_pos.x, y_dim - 1)
 			start_border = Vector2i(start_pos.x,start_pos.y-1)
 			end_border = Vector2i(end_pos.x,end_pos.y+1)
 		1: # right edge
-			print("right")
+			#print("right")
 			start_pos = Vector2i(x_dim - 1, random_even(0, y_dim - 1))
 			#end_pos = Vector2i(0, random_even(0, y_dim - 1))
 			end_pos = Vector2i(0, y_dim - start_pos.y)
 			start_border = Vector2i(start_pos.x+1, start_pos.y)
 			end_border = Vector2i(end_pos.x-1, end_pos.y)
 		2: # bottom edge
-			print("bottom")
+			#print("bottom")
 			start_pos = Vector2i(random_even(0, x_dim - 1), y_dim - 1)
 			#end_pos = Vector2i(random_even(0, x_dim - 1), 0)
 			end_pos = Vector2i(x_dim - start_pos.x, 0)
 			start_border = Vector2i(start_pos.x, start_pos.y+1)
 			end_border = Vector2i(end_pos.x, end_pos.y-1)
 		3: # left edge
-			print("left")
+			#print("left")
 			start_pos = Vector2i(0, random_even(0, y_dim - 1))
 			#end_pos = Vector2i(x_dim - 1, random_even(0, y_dim - 1))
 			end_pos = Vector2i(x_dim - 1, y_dim - start_pos.y)
