@@ -197,7 +197,7 @@ func generate_combat():
 	var level_container = Node2D.new()
 	level_container.name = "GeneratedLevel"
 	
-	var room_count = randi() % 2 + 6 #there will be 6 or 7 rooms including the base
+	var room_count = randi() % 2 + 5 #there will be 5 or 6 rooms including the base
 	
 	# Place base
 	var base = load("res://scenes/rooms/level_map.tscn").instantiate()
@@ -205,6 +205,7 @@ func generate_combat():
 	room_layout.append(Vector2(0, 0))
 	base.close_all_paths()
 	base.get_node("Door").visible = true
+	base.get_node("Exit").visible = false
 
 	#Open path(s)
 	var first_rooms = randi() % 3
@@ -239,6 +240,12 @@ func generate_combat():
 				add_to_set(room_layout, Vector2(room_layout[i].x + 1, room_layout[i].y))
 	
 	print(room_layout.size()," ", room_count)
+	
+	# Make sure if the north and east room of the base exit, the path(s) will be open
+	if Vector2(0, -1) in room_layout:
+		base.north_pass()
+	if Vector2(1, 0) in room_layout:
+		base.east_pass()
 	
 	var if_exit = false
 	
