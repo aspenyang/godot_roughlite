@@ -27,8 +27,8 @@ var miniboss_rooms := [
 
 # Room weights (out of 100)
 var room_weights := {
-	"combat": 0,
-	"maze": 100, #should be 20
+	"combat": 100,
+	"maze": 0, #should be 20
 	"reward": 0 #should be 20
 }
 
@@ -89,6 +89,10 @@ func spawn_room(room_scene: PackedScene):
 		player.global_position = spawn_point.global_position
 	else:
 		print("Warning: No SpawnPoint in this room!")
+		
+	# Inform player of current room
+	if Globals.player and Globals.player.has_method("set_current_room_scene"):
+		Globals.player.set_current_room_scene(room_scene.resource_path)
 
 	# Connect signal
 	var exit_door = room_instance.get_node("Exit")
