@@ -89,6 +89,8 @@ func spawn_room(room_scene: PackedScene):
 		player.global_position = spawn_point.global_position
 	else:
 		print("Warning: No SpawnPoint in this room!")
+	
+	player.set_current_scene(room_instance)
 		
 	# Inform player of current room
 	if Globals.player and Globals.player.has_method("set_current_room_scene"):

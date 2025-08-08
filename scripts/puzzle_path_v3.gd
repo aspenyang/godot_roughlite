@@ -1,6 +1,5 @@
 extends Node2D
 
-# Tile data
 var tile_size = 16
 
 const WALL_SOURCE_ID = 0
@@ -9,14 +8,10 @@ const WALL_ATLAS_COORDS = Vector2i(6, 1)
 const FLOOR_SOURCE_ID = 3
 const FLOOR_ATLAS_COORDS = Vector2i(7, 1)
 
-# Room size (including walls)
-const ROOM_WIDTH = 21
+const ROOM_WIDTH = 33
 const ROOM_HEIGHT = 9
-
-# Main layer index
 const MAIN_LAYER = 0
 
-# Node references
 @onready var tilemap: TileMap = $TileMap
 @onready var door = $Door
 @onready var exit_door = $Exit
@@ -31,105 +26,88 @@ var path_index: int = 0
 const TILE_HIGHLIGHT_TIME = 0.5
 const TILE_HIGHLIGHT_DELAY = 0.3
 
-var map_layout := []
-
 func _ready():
 	draw_room()
 	place_entry_exit_spawn()
 	generate_path_and_start()
 
-	
 func draw_room():
 	tilemap.clear()
 	for x in range(ROOM_WIDTH):
-		var row = []
 		for y in range(ROOM_HEIGHT):
 			var pos = Vector2i(x, y)
 			if x == 0 or x == ROOM_WIDTH - 1 or y == 0 or y == ROOM_HEIGHT - 1:
 				tilemap.set_cell(MAIN_LAYER, pos, WALL_SOURCE_ID, WALL_ATLAS_COORDS)
-				row.append("wall")
 			else:
 				tilemap.set_cell(MAIN_LAYER, pos, FLOOR_SOURCE_ID, FLOOR_ATLAS_COORDS)
 
-
 func place_entry_exit_spawn():
-	# Tile positions
+	# Fixed entry and exit tiles
 	var entry_tile = Vector2i(0, ROOM_HEIGHT / 2)
-	var exit_tile = Vector2i(ROOM_WIDTH - 2, ROOM_HEIGHT / 2) # Right next to wall
+	var exit_tile = Vector2i(ROOM_WIDTH - 2, ROOM_HEIGHT / 2)  # Left tile of the exit wall
 	var spawn_tile = Vector2i(1, ROOM_HEIGHT / 2)
 
-	# Assign positions
 	door.position = tilemap.map_to_local(entry_tile)
 	exit_door.position = tilemap.map_to_local(exit_tile)
 	spawn_point.position = tilemap.map_to_local(spawn_tile)
 
 func generate_path_and_start():
-	path = generate_maze_path()
-	print(path)
+	var start = Vector2i(1, ROOM_HEIGHT / 2)
+	var goal = Vector2i(ROOM_WIDTH - 2, ROOM_HEIGHT / 2)
+	path = generate_maze_path(start, goal)
 	path_index = 0
 	reveal_timer.start()
 	puzzle_timer.start()
 	reveal_path_tiles()
-	
-func generate_maze_path() -> Array:
-	var start = Vector2i(1, ROOM_HEIGHT / 2)
-	var goal = Vector2i(ROOM_WIDTH - 2, ROOM_HEIGHT / 2)
-	
-	var path = [start]
-	var current = start
-	var max_attempts = 1000
-	var attempts = 0
-	
-	while current != goal and attempts < max_attempts:
-		attempts += 1
-		var neighbors = get_valid_neighbors_for_maze(current, path)
-		
-		if neighbors.is_empty():
-			if path.size() > 1:
-				path.pop_back()
-				current = path.back()
-			else:
-			# Can't backtrack anymore; break or restart with attempt incremented
-				break
-			continue
-		
-		neighbors.sort_custom(func(a,b):
-			var dist_a = (a - goal).length_squared()
-			var dist_b = (b - goal).length_squared()
-			return -1 if dist_a < dist_b else 1
-		)
-		
-		var max_choice = min(2, neighbors.size())
-		var next_tile = neighbors[randi() % max_choice]
-		
-		path.append(next_tile)
-		current = next_tile
-	
-	if current != goal:
-		print("Warning: Maze path did not reach the goal after max attempts")
-	
-	return path
 
-func get_valid_neighbors_for_maze(pos: Vector2i, path: Array) -> Array:
-	var candidates = []
-	var directions = [Vector2i(1,0), Vector2i(-1,0), Vector2i(0,1), Vector2i(0,-1)]
-	for dir in directions:
-		var next_pos = pos + dir
-		if is_walkable(next_pos) and next_pos not in path:
-			candidates.append(next_pos)
-	return candidates
-	
+func generate_maze_path(start: Vector2i, goal: Vector2i) -> Array:
+	var path = []
+	var visited = {}
+
+	if _dfs(start, goal, path, visited):
+		print(path)
+		return path
+	return []
+
+func _dfs(current: Vector2i, goal: Vector2i, path: Array, visited: Dictionary) -> bool:
+	path.append(current)
+	visited[current] = true
+
+	if current == goal:
+		return true
+
+	var neighbors = get_neighbors(current)
+	neighbors.shuffle()
+
+	for neighbor in neighbors:
+		if not visited.has(neighbor) and is_walkable(neighbor):
+			if _dfs(neighbor, goal, path, visited):
+				return true
+
+	path.pop_back()
+	return false
+
+func get_neighbors(pos: Vector2i) -> Array:
+	return [
+		pos + Vector2i(1, 0),
+		pos + Vector2i(-1, 0),
+		pos + Vector2i(0, 1),
+		pos + Vector2i(0, -1),
+	]
+
 func is_walkable(pos: Vector2i) -> bool:
-	if pos.x < 0 or pos.x >= ROOM_WIDTH:
+	if pos.x <= 0 or pos.x >= ROOM_WIDTH - 1:
 		return false
-	if pos.y < 0 or pos.y >= ROOM_HEIGHT:
+	if pos.y <= 0 or pos.y >= ROOM_HEIGHT - 1:
 		return false
-	#var tile = tilemap.get_cell(pos)
-	return pos.x != 0 and pos.x != ROOM_WIDTH -1 and pos.y != 0 and pos.y != ROOM_HEIGHT - 1
-	
+	if pos in path:
+		return false
+	# Only border walls, rest is walkable floor
+	return true
+
 func _on_RevealTimer_timeout():
 	reveal_path_tiles()
-	
+
 func reveal_path_tiles() -> void:
 	await _highlight_sequence()
 
@@ -139,18 +117,17 @@ func _highlight_sequence() -> void:
 		await get_tree().create_timer(TILE_HIGHLIGHT_TIME).timeout
 		highlight_tile(tile_pos, false)
 		await get_tree().create_timer(TILE_HIGHLIGHT_DELAY).timeout
-		
+
 func highlight_tile(tile_pos: Vector2i, highlight: bool) -> void:
 	var highlight_name = "highlight_%s_%s" % [tile_pos.x, tile_pos.y]
 	var existing = get_node_or_null(highlight_name)
-	#var cell_world_pos = tilemap.map_to_local(tile_pos)
-	var cell_world_pos = Vector2i(tile_pos.x, tile_pos.y) * tile_size
+	var cell_world_pos = tile_pos * tile_size
 	if highlight:
 		if existing == null:
 			var rect = ColorRect.new()
 			rect.name = highlight_name
 			rect.color = Color(1, 1, 0.3, 0.5) # yellow transparent
-			rect.size = tilemap.tile_set.tile_size if tilemap.tile_set else Vector2(16, 16)
+			rect.size = Vector2(tile_size, tile_size)
 			rect.position = cell_world_pos
 			add_child(rect)
 	else:
@@ -168,9 +145,8 @@ func reset_player_position():
 		player.global_position = spawn_point.global_position
 		path_index = 0
 
-
 func player_stepped(tile_pos: Vector2i):
-	print(path[path_index],' ', tile_pos)
+	print(path[path_index], " ", tile_pos)
 	if path_index + 1 < path.size() and tile_pos == path[path_index + 1]:
 		path_index += 1
 		print("Correct step:", tile_pos, "Progress:", path_index, "/", path.size())
