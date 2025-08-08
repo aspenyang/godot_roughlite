@@ -24,18 +24,27 @@ const MAIN_LAYER = 0
 @onready var spawn_point = $SpawnPoint
 
 @onready var reveal_timer: Timer = $RevealTimer
-@onready var puzzle_timer: Timer = $PuzzleTimer
+#@onready var puzzle_timer: Timer = $PuzzleTimer
 
 var path: Array = []
 var path_index: int = 0
 
-const TILE_HIGHLIGHT_TIME = 0.5
+const TILE_HIGHLIGHT_TIME = 0.8
 const TILE_HIGHLIGHT_DELAY = 0.3
+
+var start = Vector2i(1, ROOM_HEIGHT / 2)
+var goal = Vector2i(ROOM_WIDTH - 2, ROOM_HEIGHT / 2)
+
+var reveal_time = 0
 
 func _ready():
 	draw_room()
 	place_entry_exit_spawn()
 	generate_path_and_start()
+	reveal_timer.wait_time = 15.0
+	#puzzle_timer.wait_time = 15.0
+	reveal_timer.connect("timeout", Callable(self, "_on_RevealTimer_timeout"))
+	#puzzle_timer.connect("timeout", Callable(self, "_on_PuzzleTimer_timeout"))
 
 func draw_room():
 	tilemap.clear()
@@ -57,19 +66,21 @@ func place_entry_exit_spawn():
 	spawn_point.position = tilemap.map_to_local(spawn_tile)
 
 func generate_path_and_start():
-	var start = Vector2i(1, ROOM_HEIGHT / 2)
-	var goal = Vector2i(ROOM_WIDTH - 2, ROOM_HEIGHT / 2)
-	path = generate_direct_path(start, goal)
+	path.clear()
+	while path.is_empty():
+		path = generate_direct_path(start, goal)
 	path_index = 0
 	reveal_timer.start()
-	puzzle_timer.start()
-	reveal_path_tiles()
+	#puzzle_timer.start()
+	#reveal_path_tiles()
 
 func generate_direct_path(start: Vector2i, goal: Vector2i) -> Array:
 	path = [start]
 	var current = start
+	var attempts = 0
 
-	while current != goal:
+	while current != goal and attempts < 1000:
+		attempts += 1
 		var neighbors = {
 			"right": current + Vector2i(1, 0),
 			"up": current + Vector2i(0, -1),
@@ -136,7 +147,7 @@ func generate_direct_path(start: Vector2i, goal: Vector2i) -> Array:
 			print("Too long path!")
 			break
 	print(path)
-	return path
+	return path if path[-1] == goal else []
 
 func get_neighbors(pos: Vector2i) -> Array:
 	return [
@@ -155,8 +166,17 @@ func is_walkable(pos: Vector2i) -> bool:
 		return false
 	return true
 
+# Every path will be revealed for 3 times, if time out after the third reveal, generate a new path
 func _on_RevealTimer_timeout():
-	reveal_path_tiles()
+	reveal_time += 1
+	if reveal_time < 4: 
+		reveal_path_tiles()
+	else:
+		print("Time's up! Resetting path and player position.")
+		reset_player_position()
+		generate_path_and_start()
+		reveal_path_tiles()
+		reveal_time = 0
 
 func reveal_path_tiles() -> void:
 	await _highlight_sequence()
@@ -197,10 +217,10 @@ func highlight_tile(tile_pos: Vector2i, highlight: bool) -> void:
 		if existing:
 			existing.queue_free()
 
-func _on_PuzzleTimer_timeout():
-	print("Time's up! Resetting path and player position.")
-	reset_player_position()
-	generate_path_and_start()
+#func _on_PuzzleTimer_timeout():
+	#print("Time's up! Resetting path and player position.")
+	#reset_player_position()
+	#generate_path_and_start()
 
 func reset_player_position():
 	var player = Globals.player
