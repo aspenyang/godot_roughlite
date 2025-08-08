@@ -177,10 +177,10 @@ func choose_combat_layout() -> String:
 			#for i in range(20):
 				#pool.append(room_path)
 		# procedural combat room
-		for i in range(1): #should be 24
+		for i in range(24): #should be 24
 			pool.append("PROCEDURAL")
 		# Add combat_mob_03 only (12% chance)
-		for i in range(20):
+		for i in range(20): #should be 20
 			pool.append(mob_rooms[2])  # combat_mob_03.tscn
 
 	var chosen = pool[randi() % pool.size()]
@@ -258,7 +258,8 @@ func generate_combat():
 	
 	var melee = preload("res://scenes/melee.tscn")
 	var ranged_enemy = preload("res://scenes/RangedEnemy.tscn")
-	var enemy_pool = [melee,ranged_enemy]
+	#var enemy_pool = [melee,ranged_enemy]
+	var enemy_pool = [melee if randf() < 0.5 else ranged_enemy, melee if randf() < 0.5 else ranged_enemy,]
 	
 	for i in range(room_layout.size()-1, 0, -1):
 		var pos = room_layout[i]
