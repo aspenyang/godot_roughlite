@@ -29,7 +29,7 @@ const MAIN_LAYER = 0
 var path: Array = []
 var path_index: int = 0
 
-const TILE_HIGHLIGHT_TIME = 0.8
+const TILE_HIGHLIGHT_TIME = 1
 const TILE_HIGHLIGHT_DELAY = 0.3
 
 var start = Vector2i(1, ROOM_HEIGHT / 2)
