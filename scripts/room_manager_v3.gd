@@ -1,5 +1,5 @@
 extends Node2D
-# This script works after implementing melee, RangedEnemy, maze, and levle_map
+# This script follows the improved version, implemented for puzzle path
 
 @onready var player = get_parent().get_node("Player")
 
