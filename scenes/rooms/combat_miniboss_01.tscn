@@ -1,9 +1,11 @@
-[gd_scene load_steps=9 format=3 uid="uid://dclqgst1jm1x2"]
+[gd_scene load_steps=11 format=3 uid="uid://dclqgst1jm1x2"]
 
+[ext_resource type="Script" uid="uid://b5cpf0modmfo8" path="res://scripts/combat_miniboss_01.gd" id="1_4k832"]
 [ext_resource type="Texture2D" uid="uid://djf70ea8wt55s" path="res://assets/world_tileset.png" id="1_ncyaj"]
 [ext_resource type="Script" uid="uid://ni1mvhrlqstc" path="res://scripts/door.gd" id="2_4k832"]
 [ext_resource type="Texture2D" uid="uid://cnwo8hn31uj6f" path="res://assets/rogueliketilesx3_JoeCreates.png" id="3_0mnmy"]
 [ext_resource type="Script" uid="uid://dx8bipfjoh4e" path="res://scripts/exit.gd" id="4_sqjyj"]
+[ext_resource type="PackedScene" uid="uid://bxb1330drumyn" path="res://scenes/mini_boss.tscn" id="6_0mnmy"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ncyaj"]
 texture = ExtResource("1_ncyaj")
@@ -146,11 +148,11 @@ sources/0 = SubResource("TileSetAtlasSource_ncyaj")
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1wawx"]
 
 [node name="combat_miniboss_01" type="Node2D"]
+script = ExtResource("1_4k832")
 
-[node name="TileMap" type="TileMap" parent="."]
+[node name="Miniboss_walls" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_lok8d")
 format = 2
-layer_0/tile_data = PackedInt32Array(0, 393216, 1, 1, 393216, 1, 2, 393216, 1, 3, 393216, 1, 4, 393216, 1, 5, 393216, 1, 6, 393216, 1, 7, 393216, 1, 8, 393216, 1, 9, 393216, 1, 10, 393216, 1, 11, 393216, 1, 12, 393216, 1, 15, 393216, 1, 16, 393216, 1, 17, 393216, 1, 18, 393216, 1, 19, 393216, 1, 655360, 393216, 1, 589824, 393216, 1, 524288, 393216, 1, 458752, 393216, 1, 393216, 393216, 1, 327680, 393216, 1, 262144, 393216, 1, 196608, 393216, 1, 131072, 393216, 1, 65536, 393216, 1, 20, 393216, 1, 21, 393216, 1, 22, 393216, 1, 23, 393216, 1, 24, 393216, 1, 25, 393216, 1, 26, 393216, 1, 65562, 393216, 1, 131098, 393216, 1, 196634, 393216, 1, 262170, 393216, 1, 327706, 393216, 1, 393242, 393216, 1, 458778, 393216, 1, 524314, 393216, 1, 589850, 393216, 1, 655386, 393216, 1, 720922, 393216, 1, 720896, 393216, 1, 720897, 393216, 1, 720898, 393216, 1, 720899, 393216, 1, 720900, 393216, 1, 720901, 393216, 1, 720902, 393216, 1, 720903, 393216, 1, 720904, 393216, 1, 720905, 393216, 1, 720906, 393216, 1, 720907, 393216, 1, 720911, 393216, 1, 720912, 393216, 1, 720913, 393216, 1, 720914, 393216, 1, 720915, 393216, 1, 720916, 393216, 1, 720917, 393216, 1, 720918, 393216, 1, 720919, 393216, 1, 720920, 393216, 1, 720921, 393216, 1, 720908, 393216, 1)
 
 [node name="Door" type="Area2D" parent="."]
 position = Vector2(222, 173)
@@ -194,6 +196,8 @@ offset_top = 193.0
 offset_right = 124.0
 offset_bottom = 216.0
 text = "Combat mini boss 01"
+
+[node name="MiniBoss" parent="." instance=ExtResource("6_0mnmy")]
 
 [connection signal="body_entered" from="Exit" to="Exit" method="_on_body_entered"]
 [connection signal="body_exited" from="Exit" to="Exit" method="_on_body_exited"]

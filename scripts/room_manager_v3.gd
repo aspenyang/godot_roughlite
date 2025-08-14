@@ -22,14 +22,14 @@ var mob_rooms := [
 
 var miniboss_rooms := [
 	"res://scenes/rooms/combat_miniboss_01.tscn",
-	"res://scenes/rooms/combat_miniboss_02.tscn"
+	#"res://scenes/rooms/combat_miniboss_02.tscn"
 ]
 
 # Room weights (out of 100)
 var room_weights := {
 	"combat": 100,
 	"maze": 0, #should be 20
-	"reward": 0 #should be 20
+	"reward": 100 #should be 20
 }
 
 func _ready():
@@ -306,7 +306,7 @@ func spawn_enemies_in_room(room: Node2D, enemy_pool: Array):
 	var margin = 64
 	var min_distance = 32
 	
-	var enemy_count = randi_range(2, 3)
+	var enemy_count = 0 # should be randi_range(2, 3)
 	
 	var spawn_positions = []
 	
