@@ -11,8 +11,8 @@ const FLOOR_SOURCE_ID = 3
 const FLOOR_ATLAS_COORDS = Vector2i(7, 1)
 
 # Room size (including walls)
-const ROOM_WIDTH = 23
-const ROOM_HEIGHT = 9
+const ROOM_WIDTH = 13 #23
+const ROOM_HEIGHT = 9 #9
 
 # Main layer index
 const MAIN_LAYER = 0

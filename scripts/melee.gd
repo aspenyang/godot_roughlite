@@ -13,7 +13,8 @@ var can_attack = true
 func _ready():
 	player = Globals.player
 	if player:
-		print("Enemy found the Player node:", player.name)
+		#print("Enemy found the Player node:", player.name)
+		pass
 	else:
 		print("Enemy could NOT find the Player node!")
 

@@ -180,7 +180,7 @@ func choose_combat_layout() -> String:
 		for i in range(24): #should be 24
 			pool.append("PROCEDURAL")
 		# Add combat_mob_03 only (12% chance)
-		for i in range(20): #should be 20
+		for i in range(10): #should be 20
 			pool.append(mob_rooms[2])  # combat_mob_03.tscn
 
 	var chosen = pool[randi() % pool.size()]
@@ -293,10 +293,11 @@ func generate_combat():
 			exit_door.visible = true
 			if_exit = true
 		
-
-		
 		level_container.add_child(unit)
 	
+			# Inform player of current room
+	if Globals.player and Globals.player.has_method("set_current_room_scene"):
+		Globals.player.set_current_room_scene("res://scenes/rooms/level_map.tscn")
 	return level_container
 
 func spawn_enemies_in_room(room: Node2D, enemy_pool: Array):
