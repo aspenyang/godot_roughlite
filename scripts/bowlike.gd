@@ -13,6 +13,6 @@ func _process(delta: float) -> void:
 	
 func fire_arrow():
 	var arrowlike_instance = arrowlike.instantiate()
-	add_child(arrowlike_instance)
+	get_parent().add_child(arrowlike_instance)
 	arrowlike_instance.global_position = global_position
 	arrowlike_instance.rotation = rotation

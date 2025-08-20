@@ -4,7 +4,7 @@ extends CharacterBody2D
 @onready var player = Globals.player
 
 @export var attack_range: float = 200
-@export var attack_cooldown: float = 2.0  # seconds between attacks
+@export var attack_cooldown: float = 5.0  # seconds between attacks
 
 var can_attack = true
 
@@ -17,9 +17,9 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	if player:
-		var direction = (player.global_position - bowlike.global_position).normalized()
-		bowlike.rotation = direction.angle()
-		#bowlike.look_at(player.global_position) #weapon points to the player
+		#var direction = (player.global_position - bowlike.global_position).normalized()
+		#bowlike.rotation = direction.angle()
+		bowlike.look_at(player.global_position) #weapon points to the player
 		#bowlike.look_at(get_global_mouse_position()) #if wanting the weapon points to the cursor
 		
 	var distance = global_position.distance_to(player.global_position)
