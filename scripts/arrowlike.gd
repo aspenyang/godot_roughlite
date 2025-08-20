@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 @onready var player = Globals.player
-const SPEED = 100
+const SPEED = 200
 var direction = Vector2.ZERO
 var wall_node
 
@@ -9,9 +9,7 @@ var wall_node
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-
 	direction = (player.global_position - global_position).normalized()
-	#wall_node = get_parent().get_parent().get_parent().get_node("Miniboss_walls")
 	wall_node = get_parent().get_parent().get_node("Miniboss_walls")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -29,6 +27,9 @@ func _process(delta: float) -> void:
 	if collision:
 		collider = collision.get_collider()
 
-		if collider == player or collider == wall_node:
+		if collider == player:
+			player.flash_hit()
+			queue_free()
+		elif collider == wall_node:
 			queue_free()
 	

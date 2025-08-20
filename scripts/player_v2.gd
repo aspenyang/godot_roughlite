@@ -93,3 +93,9 @@ func handle_tile_movement(_delta):
 		if input_dir != Vector2.ZERO:
 			target_position = global_position + input_dir * tile_size
 			moving = true
+	
+func flash_hit():
+	if $Sprite2D:
+		$Sprite2D.modulate = Color.RED
+		await get_tree().create_timer(0.2).timeout
+		$Sprite2D.modulate = Color.WHITE

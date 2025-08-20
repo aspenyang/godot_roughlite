@@ -24,3 +24,7 @@ shape = SubResource("RectangleShape2D_pso4q")
 
 [node name="Bowlike" parent="." instance=ExtResource("3_p6s6w")]
 position = Vector2(8, 0)
+
+[node name="Summon_Timer" type="Timer" parent="."]
+
+[connection signal="timeout" from="Summon_Timer" to="." method="_on_summon_timer_timeout"]
