@@ -12,12 +12,7 @@ var reward_used := false
 var miniboss_count := 0
 const MAX_MINIBOSS := 1
 
-# Paths for layouts
-#var mob_rooms := [
-	#"res://scenes/rooms/combat_mob_01.tscn",
-	#"res://scenes/rooms/combat_mob_02.tscn",
-	#"res://scenes/rooms/puzzle_path.tscn"
-#]
+# path for puzzle level
 var puzzle_path = "res://scenes/rooms/puzzle_path.tscn"
 
 var miniboss_rooms := [
@@ -151,24 +146,16 @@ func choose_combat_layout() -> String:
 	var miniboss_allowed = level >= 3 and level <= TOTAL_ROOMS - 2 and miniboss_count < MAX_MINIBOSS
 
 	if miniboss_allowed:
-		# fixed mob rooms
-		# 12% per layout (3 mobs + 2 miniboss)
-		#for room_path in mob_rooms:
-			#for i in range(12):
-				#pool.append(room_path)
-		#for room_path in miniboss_rooms:
-			#for i in range(12):
-				#pool.append(room_path)
 		
 		# procedural combat room
-		for i in range(24):
+		for i in range(2): #should be 24
 			pool.append("PROCEDURAL")
 		# Add combat_mob_03 only (12% chance)
-		for i in range(12):
+		for i in range(0): # should be 12
 			pool.append(puzzle_path)  # combat_mob_03.tscn
 		# Add miniboss rooms (12% each)
 		for room_path in miniboss_rooms:
-			for i in range(12):
+			for i in range(12): 
 				pool.append(room_path)
 		
 	else:
@@ -180,7 +167,7 @@ func choose_combat_layout() -> String:
 		for i in range(24): #should be 24
 			pool.append("PROCEDURAL")
 		# Add combat_mob_03 only (12% chance)
-		for i in range(10): #should be 20
+		for i in range(1): #should be 20
 			pool.append(puzzle_path)  # combat_mob_03.tscn
 
 	var chosen = pool[randi() % pool.size()]

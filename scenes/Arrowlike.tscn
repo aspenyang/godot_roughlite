@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://dosmn0ksec04k"]
+
+[ext_resource type="Script" uid="uid://chlp41gun7l4w" path="res://scripts/arrowlike.gd" id="1_dprbf"]
+[ext_resource type="Texture2D" uid="uid://d8gdlsef6g8n" path="res://assets/arrowlike_weapon.png" id="2_vihyi"]
+
+[node name="Arrowlike" type="CharacterBody2D"]
+collision_layer = 4
+script = ExtResource("1_dprbf")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(-1.90735e-06, 0)
+rotation = -1.5708
+scale = Vector2(1.46004, 1.38389)
+texture = ExtResource("2_vihyi")
+offset = Vector2(1, 12)
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+position = Vector2(-7, 10)
+polygon = PackedVector2Array(31, -7, 31, -14, 5, -14, 5, -7)

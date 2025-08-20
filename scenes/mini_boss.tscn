@@ -1,14 +1,18 @@
-[gd_scene load_steps=3 format=3 uid="uid://bxb1330drumyn"]
+[gd_scene load_steps=5 format=3 uid="uid://bxb1330drumyn"]
 
 [ext_resource type="Texture2D" uid="uid://b7ngkyvfa33jv" path="res://assets/slime_purple.png" id="1_lfgj6"]
+[ext_resource type="Script" uid="uid://bhuynbdgfmwqa" path="res://scripts/mini_boss.gd" id="1_pso4q"]
+[ext_resource type="PackedScene" uid="uid://blj5upxq18sl7" path="res://scenes/Bowlike.tscn" id="3_p6s6w"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pso4q"]
 size = Vector2(27, 28)
 
 [node name="MiniBoss" type="CharacterBody2D"]
+collision_layer = 2
+script = ExtResource("1_pso4q")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(7.75, -7.75)
+position = Vector2(8, -8)
 scale = Vector2(1.91176, 1.91176)
 texture = ExtResource("1_lfgj6")
 region_enabled = true
@@ -17,3 +21,6 @@ region_rect = Rect2(50.826, 32.2021, 17.6432, 17.1165)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(8.5, -9)
 shape = SubResource("RectangleShape2D_pso4q")
+
+[node name="Bowlike" parent="." instance=ExtResource("3_p6s6w")]
+position = Vector2(8, 0)
