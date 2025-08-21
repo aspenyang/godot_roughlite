@@ -1,10 +1,12 @@
 extends CharacterBody2D
 # This version is to handle tile by tile movement
 
+@onready var player_animation = $AnimationPlayer
 
 var speed = 300  # Movement speed in pixels/second (for free movement)
 var sprint_speed = 600
 var movement = Vector2.ZERO
+var last_dir = "down"
 
 var tile_size: int = 16  # Default fallback
 var moving = false
@@ -44,12 +46,16 @@ func handle_free_movement(_delta):
 	movement = Vector2.ZERO
 	if Input.is_action_pressed("ui_right"):
 		movement.x += 1
+		last_dir = "right"
 	if Input.is_action_pressed("ui_left"):
 		movement.x -= 1
+		last_dir = "left"
 	if Input.is_action_pressed("ui_up"):
 		movement.y -= 1
+		last_dir = "up"
 	if Input.is_action_pressed("ui_down"):
 		movement.y += 1
+		last_dir = "down"
 
 	var current_speed = speed
 	if Input.is_action_pressed("sprint"):
@@ -58,6 +64,15 @@ func handle_free_movement(_delta):
 	movement = movement.normalized() * current_speed
 	velocity = movement
 	move_and_slide()
+	if velocity == Vector2.ZERO:
+		var idle_animation = "idle_" + last_dir
+		if player_animation.current_animation != idle_animation:
+			player_animation.play(idle_animation)
+	else:
+		var walk_animation = "walk_%s" % last_dir
+		if player_animation.current_animation != walk_animation:
+			player_animation.play(walk_animation)
+	
 
 func handle_tile_movement(_delta):
 	if moving:
@@ -83,12 +98,16 @@ func handle_tile_movement(_delta):
 		var input_dir = Vector2.ZERO
 		if Input.is_action_just_pressed("ui_right"):
 			input_dir.x = 1
+			last_dir = "right"
 		elif Input.is_action_just_pressed("ui_left"):
 			input_dir.x = -1
+			last_dir = "left"
 		elif Input.is_action_just_pressed("ui_up"):
 			input_dir.y = -1
+			last_dir = "up"
 		elif Input.is_action_just_pressed("ui_down"):
 			input_dir.y = 1
+			last_dir = "down"
 		
 		if input_dir != Vector2.ZERO:
 			target_position = global_position + input_dir * tile_size
