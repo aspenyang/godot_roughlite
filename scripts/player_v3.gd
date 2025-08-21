@@ -74,7 +74,8 @@ func handle_free_movement(_delta):
 	velocity = movement
 	#if Input.is_action_just_pressed("left_click"):
 		#player_animation.play("attack_down")
-	handle_attack()
+	if allow_attack:
+		handle_attack()
 	move_and_slide()
 	if not is_attacking:
 		if velocity == Vector2.ZERO:
@@ -135,7 +136,7 @@ func handle_tile_movement(_delta):
 	
 
 func handle_attack():
-	if Input.is_action_just_pressed("left_click") and not is_attacking and allow_attack:
+	if Input.is_action_just_pressed("left_click") and not is_attacking:
 		is_attacking = true
 		player_sword.visible = true
 		player_animation.play("attack_" + last_dir)
