@@ -1,5 +1,5 @@
 extends CharacterBody2D
-# This version is to handle tile by tile movement
+# This version is to handle attack animation
 
 @onready var player_animation = $AnimationPlayer
 @onready var player_sword: Area2D = $PlayerSword
@@ -8,6 +8,8 @@ var speed = 300  # Movement speed in pixels/second (for free movement)
 var sprint_speed = 600
 var movement = Vector2.ZERO
 var last_dir = "down"
+
+var is_attacking = false
 
 var tile_size: int = 16  # Default fallback
 var moving = false
@@ -37,7 +39,6 @@ func set_current_scene(room_scene: Node):
 
 func _physics_process(_delta):
 	var is_puzzle_scene = current_room_scene_path.ends_with("puzzle_path.tscn")
-
 		
 	if is_puzzle_scene:
 		handle_tile_movement(_delta)
@@ -66,15 +67,19 @@ func handle_free_movement(_delta):
 
 	movement = movement.normalized() * current_speed
 	velocity = movement
+	#if Input.is_action_just_pressed("left_click"):
+		#player_animation.play("attack_down")
+	handle_attack()
 	move_and_slide()
-	if velocity == Vector2.ZERO:
-		var idle_animation = "idle_" + last_dir
-		if player_animation.current_animation != idle_animation:
-			player_animation.play(idle_animation)
-	else:
-		var walk_animation = "walk_%s" % last_dir
-		if player_animation.current_animation != walk_animation:
-			player_animation.play(walk_animation)
+	if not is_attacking:
+		if velocity == Vector2.ZERO:
+			var idle_animation = "idle_" + last_dir
+			if player_animation.current_animation != idle_animation:
+				player_animation.play(idle_animation)
+		else:
+			var walk_animation = "walk_%s" % last_dir
+			if player_animation.current_animation != walk_animation:
+				player_animation.play(walk_animation)
 
 
 func handle_tile_movement(_delta):
@@ -124,8 +129,18 @@ func handle_tile_movement(_delta):
 				player_animation.play(idle_animation)
 	
 
+func handle_attack():
+	if Input.is_action_just_pressed("left_click") and not is_attacking:
+		is_attacking = true
+		player_animation.play("attack_down")
+
 func flash_hit():
 	if $Sprite2D:
 		$Sprite2D.modulate = Color.RED
 		await get_tree().create_timer(0.2).timeout
 		$Sprite2D.modulate = Color.WHITE
+
+
+func _on_animation_player_animation_finished(anim_name: StringName) -> void:
+	if anim_name == "attack_down":
+		is_attacking = false
