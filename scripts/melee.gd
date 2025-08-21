@@ -7,6 +7,9 @@ extends CharacterBody2D
 @export var separation_distance: float = 24   # desired spacing between enemies
 @export var separation_strength: float = 0.5  # how strong they push apart
 
+@onready var sprite_2d: Sprite2D = $Sprite2D
+var hit_flash_time := 0.2
+
 var player: Node2D = null
 var can_attack = true
 
@@ -75,3 +78,9 @@ func get_separation_vector() -> Vector2:
 				push += away * strength * separation_strength
 
 	return push
+
+func on_hit():
+	# Tint red when hit
+	sprite_2d.modulate = Color(1, 0.3, 0.3)
+	await get_tree().create_timer(hit_flash_time).timeout
+	sprite_2d.modulate = Color(1, 1, 1) # Reset to normal

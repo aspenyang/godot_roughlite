@@ -10,6 +10,9 @@ extends CharacterBody2D
 @export var fire_cooldown: float = 3.0  # seconds between attacks
 @export var summon_cooldown: float = 5.0 
 
+@onready var sprite_2d: Sprite2D = $Sprite2D
+var hit_flash_time := 0.2
+
 const SPEED = 50
 const MARGIN = 32
 var room_width
@@ -84,3 +87,9 @@ func summon_mob():
 
 func _on_summon_timer_timeout() -> void:
 	summon_mob()
+	
+func on_hit():
+	# Tint red when hit
+	sprite_2d.modulate = Color(1, 0.3, 0.3)
+	await get_tree().create_timer(hit_flash_time).timeout
+	sprite_2d.modulate = Color(1, 1, 1) # Reset to normal

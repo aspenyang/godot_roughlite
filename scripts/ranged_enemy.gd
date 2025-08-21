@@ -14,6 +14,9 @@ var player: Node2D = null
 @onready var attack_timer = $AttackTimer
 @onready var agent = $NavigationAgent2D
 
+@onready var sprite_2d: Sprite2D = $Sprite2D
+var hit_flash_time := 0.2
+
 func _ready():
 	# Get player reference
 	player = Globals.player
@@ -155,3 +158,9 @@ func is_point_in_polygon(point: Vector2, polygon: Array) -> bool:
 		j = i
 	
 	return inside
+
+func on_hit():
+	# Tint red when hit
+	sprite_2d.modulate = Color(1, 0.3, 0.3)
+	await get_tree().create_timer(hit_flash_time).timeout
+	sprite_2d.modulate = Color(1, 1, 1) # Reset to normal
