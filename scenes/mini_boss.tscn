@@ -22,7 +22,7 @@ region_rect = Rect2(50.826, 32.2021, 17.6432, 17.1165)
 position = Vector2(8.5, -9)
 shape = SubResource("RectangleShape2D_pso4q")
 
-[node name="Bowlike" parent="." instance=ExtResource("3_p6s6w")]
+[node name="Bowlike" parent="." groups=["enemies"] instance=ExtResource("3_p6s6w")]
 position = Vector2(8, 0)
 
 [node name="Summon_Timer" type="Timer" parent="."]

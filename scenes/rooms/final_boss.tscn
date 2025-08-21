@@ -144,7 +144,7 @@ sources/0 = SubResource("TileSetAtlasSource_3k6cr")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hswhe"]
 
-[node name="final_boss" type="Node2D"]
+[node name="final_boss" type="Node2D" groups=["enemies"]]
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_t8881")
