@@ -5,9 +5,9 @@
 [ext_resource type="PackedScene" uid="uid://blj5upxq18sl7" path="res://scenes/Bowlike.tscn" id="3_p6s6w"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pso4q"]
-size = Vector2(27, 28)
+size = Vector2(27, 30)
 
-[node name="MiniBoss" type="CharacterBody2D"]
+[node name="MiniBoss" type="CharacterBody2D" groups=["enemies"]]
 collision_layer = 2
 script = ExtResource("1_pso4q")
 
@@ -19,10 +19,10 @@ region_enabled = true
 region_rect = Rect2(50.826, 32.2021, 17.6432, 17.1165)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(8.5, -9)
+position = Vector2(9.5, -9)
 shape = SubResource("RectangleShape2D_pso4q")
 
-[node name="Bowlike" parent="." groups=["enemies"] instance=ExtResource("3_p6s6w")]
+[node name="Bowlike" parent="." instance=ExtResource("3_p6s6w")]
 position = Vector2(8, 0)
 
 [node name="Summon_Timer" type="Timer" parent="."]

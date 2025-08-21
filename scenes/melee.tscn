@@ -47,8 +47,9 @@ size = Vector2(24, 24)
 
 [node name="Melee" type="Node2D"]
 
-[node name="Melee" type="CharacterBody2D" parent="."]
+[node name="Melee" type="CharacterBody2D" parent="." groups=["enemies"]]
 position = Vector2(8, 8)
+collision_layer = 2
 script = ExtResource("1_2jfud")
 
 [node name="Sprite2D" type="Sprite2D" parent="Melee"]

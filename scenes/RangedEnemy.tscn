@@ -8,6 +8,7 @@
 size = Vector2(24, 22)
 
 [node name="RangedEnemy" type="CharacterBody2D" groups=["enemies"]]
+collision_layer = 2
 script = ExtResource("1_wltc5")
 bomb_scene = ExtResource("2_k7el5")
 

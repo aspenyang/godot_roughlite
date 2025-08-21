@@ -30,6 +30,7 @@ func _ready() -> void:
 		#tile_size = tilemap.cell_size.x  # assuming square tiles
 
 	target_position = global_position
+	player_sword.visible = false
 
 func set_current_room_scene(path: String) -> void:
 	current_room_scene_path = path
