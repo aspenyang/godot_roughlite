@@ -71,6 +71,7 @@ func load_next_room():
 
 	room_scene = load(scene_path)
 	spawn_room(room_scene)
+	print(player.current_room_scene_path)
 	rooms_completed += 1
 
 func spawn_room(room_scene: PackedScene):
@@ -282,7 +283,7 @@ func generate_combat():
 		
 		level_container.add_child(unit)
 	
-			# Inform player of current room
+	# Inform player of current room
 	if Globals.player and Globals.player.has_method("set_current_room_scene"):
 		Globals.player.set_current_room_scene("res://scenes/rooms/level_map.tscn")
 	return level_container

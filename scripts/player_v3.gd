@@ -10,6 +10,7 @@ var movement = Vector2.ZERO
 var last_dir = "down"
 
 var is_attacking = false
+var allow_attack = false
 
 var tile_size: int = 16  # Default fallback
 var moving = false
@@ -32,6 +33,10 @@ func _ready() -> void:
 
 func set_current_room_scene(path: String) -> void:
 	current_room_scene_path = path
+	if path.ends_with("reward.tscn") or path.ends_with("maze.tscn") or path.ends_with("puzzle_path.tscn"):
+		allow_attack = false
+	else:
+		allow_attack = true
 
 func set_current_scene(room_scene: Node):
 	current_scene = room_scene
@@ -130,9 +135,10 @@ func handle_tile_movement(_delta):
 	
 
 func handle_attack():
-	if Input.is_action_just_pressed("left_click") and not is_attacking:
+	if Input.is_action_just_pressed("left_click") and not is_attacking and allow_attack:
 		is_attacking = true
-		player_animation.play("attack_down")
+		player_sword.visible = true
+		player_animation.play("attack_" + last_dir)
 
 func flash_hit():
 	if $Sprite2D:
@@ -142,5 +148,6 @@ func flash_hit():
 
 
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
-	if anim_name == "attack_down":
+	if anim_name.begins_with("attack_"):
 		is_attacking = false
+		player_sword.visible = false
