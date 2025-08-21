@@ -112,6 +112,13 @@ func handle_tile_movement(_delta):
 		if input_dir != Vector2.ZERO:
 			target_position = global_position + input_dir * tile_size
 			moving = true
+			var walk_animation = "walk_%s" % last_dir
+			if player_animation.current_animation != walk_animation:
+				player_animation.play(walk_animation)
+		else:
+			var idle_animation = "idle_" + last_dir
+			if player_animation.current_animation != idle_animation:
+				player_animation.play(idle_animation)
 	
 func flash_hit():
 	if $Sprite2D:
