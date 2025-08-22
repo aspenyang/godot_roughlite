@@ -12,6 +12,7 @@ extends Entity
 @export var summon_cooldown: float = 5.0 
 
 @onready var sprite_2d: Sprite2D = $Sprite2D
+var sprite_size
 var hit_flash_time := 0.2
 
 var miniboss_max_health = 50
@@ -22,19 +23,29 @@ var room_width
 var room_height
 
 const melee = preload("res://scenes/melee.tscn")
+const TextBubbleScene = preload("res://scenes/TextBubble.tscn")
+var summon_bubble: Node2D
 
 var can_attack = true
 var can_summon = true
+var summon_text_duration = 0.5
+var summon_text_fontsize = 16
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	room_height = room_scene.y_dim * 16
 	room_width = room_scene.x_dim * 16
+	summon_bubble = TextBubbleScene.instantiate()
+	add_child(summon_bubble)
+	summon_bubble.visible = false
 	summon_timer.wait_time = summon_cooldown
 	summon_timer.start()
 	
 	max_health = miniboss_max_health
 	super._ready()
+	
+	sprite_size = sprite_2d.texture.get_size() * sprite_2d.scale
 
 
 
@@ -89,7 +100,8 @@ func summon_mob():
 		
 	enemy.position = random_pos
 	room_scene.add_child(enemy)
-	
+	summon_bubble.position = Vector2(-sprite_size.x / 2 + summon_bubble.label.size.x / 2, -sprite_size.y / 2)
+	summon_bubble.show_text("Summon mobs", summon_text_duration, summon_text_fontsize,Color(0,0,0))
 
 func _on_summon_timer_timeout() -> void:
 	summon_mob()

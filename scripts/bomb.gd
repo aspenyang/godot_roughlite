@@ -23,7 +23,7 @@ func _ready():
 	var circle_shape = CircleShape2D.new()
 	circle_shape.radius = explosion_radius
 	collision_shape.shape = circle_shape
-	explosion_area.body_entered.connect(_on_body_entered_explosion_area)
+	#explosion_area.body_entered.connect(_on_body_entered_explosion_area)
 	
 	# Move to target position
 	if target_pos != Vector2.ZERO:
@@ -81,9 +81,10 @@ func explode():
 
 func damage_entity(body: Node):
 	
-	#print("Explosion hit: ", body.name)
+	#if body.is_in_group("enemies"):
+		#print("Explosion hit: ", body.name)
 	
-	# Damage entities
+	# Damage entities that's not RangedEnemy
 	if body.has_method("on_hit") and body.name != "RangedEnemy":
 		body.on_hit(damage)
 
@@ -101,7 +102,7 @@ func create_explosion_effect():
 		var tween = create_tween()
 		tween.tween_property(hint_circle, "modulate:a", 0.0, 0.3)
 
-func _on_body_entered_explosion_area(body):
-	# This gets called when bodies enter the area during the fuse time
-	# You could add additional logic here if needed
-	pass
+#func _on_body_entered_explosion_area(body):
+	## This gets called when bodies enter the area during the fuse time
+	## You could add additional logic here if needed
+	#pass
