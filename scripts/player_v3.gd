@@ -1,8 +1,11 @@
-extends CharacterBody2D
+#extends CharacterBody2D
+extends Entity
 # This version is to handle attack animation
 
 @onready var player_animation = $AnimationPlayer
 @onready var player_sword: Area2D = $PlayerSword
+
+var player_max_health = 100
 
 var speed = 300  # Movement speed in pixels/second (for free movement)
 var sprint_speed = 600
@@ -31,6 +34,10 @@ func _ready() -> void:
 
 	target_position = global_position
 	player_sword.visible = false
+	player_sword.collision_mask = 4
+	
+	max_health = player_max_health
+	super._ready()
 
 func set_current_room_scene(path: String) -> void:
 	current_room_scene_path = path
@@ -139,8 +146,13 @@ func handle_tile_movement(_delta):
 func handle_attack():
 	if Input.is_action_just_pressed("left_click") and not is_attacking:
 		is_attacking = true
+		player_sword.collision_mask = 2 | 3
 		player_sword.visible = true
 		player_animation.play("attack_" + last_dir)
+
+func on_hit(damage):
+	health.take_damage(damage)
+	flash_hit()
 
 func flash_hit():
 	if $Sprite2D:
@@ -153,3 +165,8 @@ func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	if anim_name.begins_with("attack_"):
 		is_attacking = false
 		player_sword.visible = false
+		player_sword.collision_mask = 4
+		
+func set_player_max_health(new_max_health):
+	max_health = new_max_health
+	

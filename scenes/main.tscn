@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://h3vj31gexpft"]
+[gd_scene load_steps=23 format=3 uid="uid://h3vj31gexpft"]
 
 [ext_resource type="Script" uid="uid://sccjeh8emm56" path="res://scripts/main.gd" id="1_tbgi4"]
 [ext_resource type="Script" uid="uid://bajy8fx6wmv8i" path="res://scripts/player_v3.gd" id="2_o6xl0"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://b38qsv2gki4r4" path="res://assets/female_adventurer_walk.png" id="3_tefeu"]
 [ext_resource type="Script" uid="uid://cghlvogcr845a" path="res://scripts/room_manager_v4.gd" id="5_tbgi4"]
 [ext_resource type="PackedScene" uid="uid://l3qsmiu0ngpm" path="res://scenes/Player_Sword.tscn" id="6_o6xl0"]
+[ext_resource type="Script" uid="uid://kmm2pjwmkbvu" path="res://scripts/Health.gd" id="7_tipki"]
 
 [sub_resource type="Animation" id="Animation_tipki"]
 length = 0.001
@@ -499,6 +500,7 @@ script = ExtResource("1_tbgi4")
 z_index = 1
 collision_mask = 7
 script = ExtResource("2_o6xl0")
+metadata/_custom_type_script = "uid://clhuntc7e7e5t"
 
 [node name="Sprite2D" type="Sprite2D" parent="Player"]
 position = Vector2(-1, -4)
@@ -523,6 +525,11 @@ visible = false
 z_index = -1
 position = Vector2(-3, 0)
 rotation = -0.523599
+collision_mask = 8
+
+[node name="Health" type="Node" parent="Player"]
+script = ExtResource("7_tipki")
+metadata/_custom_type_script = "uid://kmm2pjwmkbvu"
 
 [node name="RoomManager" type="Node2D" parent="."]
 script = ExtResource("5_tbgi4")

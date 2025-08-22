@@ -2,7 +2,7 @@ extends Node2D
 
 @export var explosion_radius: float = 32.0
 @export var fuse_time: float = 2.0
-@export var damage: int = 25
+@export var damage: int = 20
 @export var hint_circle_color: Color = Color.RED
 @export var hint_circle_alpha: float = 0.3
 
@@ -80,29 +80,15 @@ func explode():
 	queue_free()
 
 func damage_entity(body: Node):
-	# Don't damage ranged enemies (the ones that threw this bomb)
-	if body.get_script() and body.get_script().get_path().get_file() == "rangedenemy.gd":
-		print("Skipping damage to ranged enemy")
-		return
 	
-	print("Explosion hit: ", body.name)
+	#print("Explosion hit: ", body.name)
 	
-	# Damage player
-	if body == Globals.player:
-		if body.has_method("take_damage"):
-			body.take_damage(damage)
-		# Always show visual hit effect for player
-		if body.has_method("flash_hit"):
-			body.flash_hit()
-		print("Player hit by explosion!")
+	# Damage entities
+	if body.has_method("on_hit") and body.name != "RangedEnemy":
+		body.on_hit(damage)
+
+		print(body.name + " hit by explosion!")
 	
-	# Damage other enemies (future-proofing)
-	elif body.has_method("take_damage"):
-		body.take_damage(damage)
-		# Show visual hit effect for other enemies too
-		if body.has_method("flash_hit"):
-			body.flash_hit()
-		print("Enemy hit by explosion: ", body.name)
 
 func create_explosion_effect():
 	# Simple explosion visual - you can replace with AnimationPlayer later

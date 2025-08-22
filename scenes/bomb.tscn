@@ -11,6 +11,8 @@ size = Vector2(16, 16)
 radius = 64.0
 
 [node name="Bomb" type="CharacterBody2D"]
+collision_layer = 0
+collision_mask = 0
 script = ExtResource("1_j15uc")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
@@ -29,6 +31,7 @@ shape = SubResource("RectangleShape2D_1hf1o")
 script = ExtResource("3_nxi8k")
 
 [node name="ExplosionArea" type="Area2D" parent="."]
+collision_mask = 7
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ExplosionArea"]
 shape = SubResource("CircleShape2D_56fam")
