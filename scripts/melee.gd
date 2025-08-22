@@ -1,4 +1,5 @@
-extends CharacterBody2D
+#extends CharacterBody2D
+extends Entity
 
 @export var speed: float = 80
 @export var attack_range: float = 20
@@ -10,6 +11,8 @@ extends CharacterBody2D
 @onready var sprite_2d: Sprite2D = $Sprite2D
 var hit_flash_time := 0.2
 
+var melee_max_health = 20
+
 var player: Node2D = null
 var can_attack = true
 
@@ -20,6 +23,10 @@ func _ready():
 		pass
 	else:
 		print("Enemy could NOT find the Player node!")
+	max_health = melee_max_health
+	print(max_health)
+	super._ready()
+
 
 func _physics_process(delta):
 	if not player:
@@ -79,8 +86,18 @@ func get_separation_vector() -> Vector2:
 
 	return push
 
-func on_hit():
+func flash_hit():
 	# Tint red when hit
 	sprite_2d.modulate = Color(1, 0.3, 0.3)
 	await get_tree().create_timer(hit_flash_time).timeout
 	sprite_2d.modulate = Color(1, 1, 1) # Reset to normal
+
+func on_hit(damage):
+	health.take_damage(damage)
+	flash_hit()
+	
+func _on_health_changed(new_health: int):
+	print("%s health: %d" % [name, new_health])
+	
+
+	

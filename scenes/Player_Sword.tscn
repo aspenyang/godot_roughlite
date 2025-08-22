@@ -4,19 +4,19 @@
 [ext_resource type="Script" uid="uid://dbasy6t1ynr8m" path="res://scripts/player_sword.gd" id="1_o55ob"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fuvvi"]
-size = Vector2(13, 24.5)
+size = Vector2(13, 31.5)
 
 [node name="PlayerSword" type="Area2D"]
 collision_mask = 6
 script = ExtResource("1_o55ob")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0.5, 12.75)
+position = Vector2(0.5, 16.25)
 shape = SubResource("RectangleShape2D_fuvvi")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(2, 11.5)
-scale = Vector2(1.125, 1.40625)
+position = Vector2(2, 15)
+scale = Vector2(1.125, 1.625)
 texture = ExtResource("1_fuvvi")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

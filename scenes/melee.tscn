@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://dvl33tt8b3lpn"]
+[gd_scene load_steps=9 format=3 uid="uid://dvl33tt8b3lpn"]
 
 [ext_resource type="Script" uid="uid://boo0yvjsbqn14" path="res://scripts/melee.gd" id="1_2jfud"]
 [ext_resource type="Texture2D" uid="uid://vf6by4yfxx8r" path="res://assets/Orc.png" id="2_2jfud"]
 [ext_resource type="Texture2D" uid="uid://3pprb4txpjr" path="res://assets/Orc-Attack01.png" id="3_2jfud"]
+[ext_resource type="Script" uid="uid://kmm2pjwmkbvu" path="res://scripts/Health.gd" id="4_iedip"]
 
 [sub_resource type="Animation" id="Animation_r1ups"]
 length = 0.001
@@ -51,6 +52,7 @@ size = Vector2(24, 24)
 position = Vector2(8, 8)
 collision_layer = 2
 script = ExtResource("1_2jfud")
+metadata/_custom_type_script = "uid://clhuntc7e7e5t"
 
 [node name="Sprite2D" type="Sprite2D" parent="Melee"]
 position = Vector2(4, -4)
@@ -68,3 +70,7 @@ libraries = {
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Melee"]
 position = Vector2(4, -4)
 shape = SubResource("RectangleShape2D_bq4yf")
+
+[node name="Health" type="Node" parent="Melee"]
+script = ExtResource("4_iedip")
+metadata/_custom_type_script = "uid://kmm2pjwmkbvu"
