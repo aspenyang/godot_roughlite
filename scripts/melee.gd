@@ -1,5 +1,6 @@
 #extends CharacterBody2D
 extends Entity
+# inherit variable "health" and "max_health"
 
 @export var speed: float = 80
 @export var attack_range: float = 20
@@ -24,7 +25,7 @@ func _ready():
 	else:
 		print("Enemy could NOT find the Player node!")
 	max_health = melee_max_health
-	print(max_health)
+	#print(max_health)
 	super._ready()
 
 

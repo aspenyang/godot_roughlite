@@ -14,12 +14,7 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	#var movement = Vector2.ZERO
-	
-	#movement.x += direction.x
-	#movement.y += direction.y
-	
-	#velocity = movement * SPEED * delta
+
 	velocity = direction * SPEED * delta
 	#var collision = move_and_slide()
 	var collision = move_and_collide(velocity)

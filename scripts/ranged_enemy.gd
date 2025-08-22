@@ -1,4 +1,5 @@
-extends CharacterBody2D
+#extends CharacterBody2D
+extends Entity
 
 @export var attack_cooldown: float = 3.0
 @export var attack_range: float = 200.0
@@ -16,6 +17,8 @@ var player: Node2D = null
 
 @onready var sprite_2d: Sprite2D = $Sprite2D
 var hit_flash_time := 0.2
+
+var ranged_max_health = 30
 
 func _ready():
 	# Get player reference
@@ -36,6 +39,8 @@ func _ready():
 	
 	# Wait for navigation to be ready
 	call_deferred("setup_navigation")
+	max_health = ranged_max_health
+	super._ready()
 
 func setup_navigation():
 	# Wait one frame for navigation to be ready
@@ -159,8 +164,12 @@ func is_point_in_polygon(point: Vector2, polygon: Array) -> bool:
 	
 	return inside
 
-func on_hit():
+func flash_hit():
 	# Tint red when hit
 	sprite_2d.modulate = Color(1, 0.3, 0.3)
 	await get_tree().create_timer(hit_flash_time).timeout
 	sprite_2d.modulate = Color(1, 1, 1) # Reset to normal
+
+func on_hit(damage):
+	health.take_damage(damage)
+	flash_hit()

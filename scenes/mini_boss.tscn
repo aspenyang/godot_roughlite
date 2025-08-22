@@ -1,15 +1,17 @@
-[gd_scene load_steps=5 format=3 uid="uid://bxb1330drumyn"]
+[gd_scene load_steps=6 format=3 uid="uid://bxb1330drumyn"]
 
 [ext_resource type="Texture2D" uid="uid://b7ngkyvfa33jv" path="res://assets/slime_purple.png" id="1_lfgj6"]
 [ext_resource type="Script" uid="uid://bhuynbdgfmwqa" path="res://scripts/mini_boss.gd" id="1_pso4q"]
 [ext_resource type="PackedScene" uid="uid://blj5upxq18sl7" path="res://scenes/Bowlike.tscn" id="3_p6s6w"]
+[ext_resource type="Script" uid="uid://kmm2pjwmkbvu" path="res://scripts/Health.gd" id="4_rl7on"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pso4q"]
-size = Vector2(27, 30)
+size = Vector2(32, 34)
 
 [node name="MiniBoss" type="CharacterBody2D" groups=["enemies"]]
 collision_layer = 2
 script = ExtResource("1_pso4q")
+metadata/_custom_type_script = "uid://clhuntc7e7e5t"
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(8, -8)
@@ -19,12 +21,16 @@ region_enabled = true
 region_rect = Rect2(50.826, 32.2021, 17.6432, 17.1165)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(9.5, -9)
+position = Vector2(9, -9)
 shape = SubResource("RectangleShape2D_pso4q")
 
 [node name="Bowlike" parent="." instance=ExtResource("3_p6s6w")]
 position = Vector2(8, 0)
 
 [node name="Summon_Timer" type="Timer" parent="."]
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("4_rl7on")
+metadata/_custom_type_script = "uid://kmm2pjwmkbvu"
 
 [connection signal="timeout" from="Summon_Timer" to="." method="_on_summon_timer_timeout"]

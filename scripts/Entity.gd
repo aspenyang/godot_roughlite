@@ -2,7 +2,7 @@ extends CharacterBody2D
 class_name Entity
 
 @onready var health: Health = $Health
-@export var max_health: inta
+@export var max_health: int
 
 
 func _ready():

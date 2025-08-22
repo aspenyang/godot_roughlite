@@ -1,4 +1,5 @@
-extends CharacterBody2D
+#extends CharacterBody2D
+extends Entity
 
 @onready var bowlike: Area2D = $Bowlike
 @onready var player = Globals.player
@@ -12,6 +13,8 @@ extends CharacterBody2D
 
 @onready var sprite_2d: Sprite2D = $Sprite2D
 var hit_flash_time := 0.2
+
+var miniboss_max_health = 50
 
 const SPEED = 50
 const MARGIN = 32
@@ -29,6 +32,9 @@ func _ready() -> void:
 	room_width = room_scene.x_dim * 16
 	summon_timer.wait_time = summon_cooldown
 	summon_timer.start()
+	
+	max_health = miniboss_max_health
+	super._ready()
 
 
 
@@ -88,8 +94,12 @@ func summon_mob():
 func _on_summon_timer_timeout() -> void:
 	summon_mob()
 	
-func on_hit():
+func flash_hit():
 	# Tint red when hit
 	sprite_2d.modulate = Color(1, 0.3, 0.3)
 	await get_tree().create_timer(hit_flash_time).timeout
 	sprite_2d.modulate = Color(1, 1, 1) # Reset to normal
+
+func on_hit(damage):
+	health.take_damage(damage)
+	flash_hit()

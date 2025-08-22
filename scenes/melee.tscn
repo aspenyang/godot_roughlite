@@ -49,13 +49,12 @@ size = Vector2(24, 24)
 [node name="Melee" type="Node2D"]
 
 [node name="Melee" type="CharacterBody2D" parent="." groups=["enemies"]]
-position = Vector2(8, 8)
 collision_layer = 2
 script = ExtResource("1_2jfud")
 metadata/_custom_type_script = "uid://clhuntc7e7e5t"
 
 [node name="Sprite2D" type="Sprite2D" parent="Melee"]
-position = Vector2(4, -4)
+position = Vector2(7, -1)
 scale = Vector2(0.962963, 0.962963)
 texture = ExtResource("2_2jfud")
 region_enabled = true
@@ -68,7 +67,7 @@ libraries = {
 }
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Melee"]
-position = Vector2(4, -4)
+position = Vector2(4, -1)
 shape = SubResource("RectangleShape2D_bq4yf")
 
 [node name="Health" type="Node" parent="Melee"]
