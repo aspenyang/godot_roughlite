@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://oqmjhqjxyuyx"]
+
+[ext_resource type="Texture2D" uid="uid://ccckycp7dnhk" path="res://assets/boss_saber.png" id="1_vxatf"]
+
+[node name="BossSaber" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(-9.53674e-07, -21.25)
+scale = Vector2(1.76563, 1.98438)
+texture = ExtResource("1_vxatf")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+light_mask = 0
+position = Vector2(-2, -5.11637)
+scale = Vector2(1, 0.931548)
+polygon = PackedVector2Array(-5, -8, 7, -8, 7, -15, 4, -15, 4, -47.1083, -2, -47.1083, -2, -14.9038, -5, -15)

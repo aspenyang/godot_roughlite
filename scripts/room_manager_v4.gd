@@ -4,7 +4,7 @@ extends Node2D
 
 var current_room: Node = null
 var rooms_completed: int = 0
-const TOTAL_ROOMS: int = 7
+const TOTAL_ROOMS: int = 3 # set to 3 for testing. Originally set to 7 or 8
 
 var maze_used := false
 var reward_used := false
@@ -42,7 +42,7 @@ func load_next_room():
 
 	# Final boss room
 	if rooms_completed == TOTAL_ROOMS - 1:
-		room_scene = load("res://scenes/rooms/final_boss.tscn")
+		room_scene = load("res://scenes/rooms/final_level.tscn")
 		spawn_room(room_scene)
 		rooms_completed += 1
 		return

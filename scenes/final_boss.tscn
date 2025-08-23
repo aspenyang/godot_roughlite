@@ -1,0 +1,73 @@
+[gd_scene load_steps=8 format=3 uid="uid://blcivoneh6rvf"]
+
+[ext_resource type="Script" uid="uid://dvor7devaowxe" path="res://scripts/final_boss.gd" id="1_gagl1"]
+[ext_resource type="Texture2D" uid="uid://dhemhuvsh8hr1" path="res://icon.svg" id="2_723ie"]
+[ext_resource type="PackedScene" uid="uid://oqmjhqjxyuyx" path="res://scenes/boss_saber.tscn" id="3_gu5vo"]
+[ext_resource type="Script" uid="uid://kmm2pjwmkbvu" path="res://scripts/Health.gd" id="5_1sdr7"]
+
+[sub_resource type="Animation" id="Animation_723ie"]
+resource_name = "attack_saber"
+length = 0.4
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("boss_weapon/BossSaber:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 1.5708, 3.14159, 4.71239, 6.28319]
+}
+
+[sub_resource type="Animation" id="Animation_gu5vo"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("boss_weapon/BossSaber:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ud6ed"]
+_data = {
+&"RESET": SubResource("Animation_gu5vo"),
+&"attack_saber": SubResource("Animation_723ie")
+}
+
+[node name="FinalBoss" type="CharacterBody2D" groups=["enemies"]]
+collision_layer = 4
+script = ExtResource("1_gagl1")
+metadata/_custom_type_script = "uid://clhuntc7e7e5t"
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, 9.53674e-07)
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("2_723ie")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+
+[node name="boss_weapon" type="Node2D" parent="."]
+
+[node name="BossSaber" parent="boss_weapon" instance=ExtResource("3_gu5vo")]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_ud6ed")
+}
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("5_1sdr7")
+metadata/_custom_type_script = "uid://kmm2pjwmkbvu"
+
+[node name="Ranged_Timer" type="Timer" parent="."]
+
+[connection signal="timeout" from="Ranged_Timer" to="." method="_on_ranged_timer_timeout"]
