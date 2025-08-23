@@ -15,7 +15,7 @@ func _on_body_entered(body) -> void:
 	print(body)
 	if body.is_in_group("enemies"):
 		body.on_hit(damage)
-		print("hit")
+		print("sword hit ", body, "sword mask ", collision_mask)
 		
 func set_damage(new_damage):
 	damage = new_damage

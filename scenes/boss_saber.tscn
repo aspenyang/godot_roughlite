@@ -1,8 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://oqmjhqjxyuyx"]
+[gd_scene load_steps=3 format=3 uid="uid://oqmjhqjxyuyx"]
 
+[ext_resource type="Script" uid="uid://dxtx3qu1q62nc" path="res://scripts/boss_saber.gd" id="1_edohk"]
 [ext_resource type="Texture2D" uid="uid://ccckycp7dnhk" path="res://assets/boss_saber.png" id="1_vxatf"]
 
-[node name="BossSaber" type="Node2D"]
+[node name="BossSaber" type="Area2D"]
+collision_layer = 4
+script = ExtResource("1_edohk")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(-9.53674e-07, -21.25)
@@ -11,6 +14,8 @@ texture = ExtResource("1_vxatf")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 light_mask = 0
-position = Vector2(-2, -5.11637)
-scale = Vector2(1, 0.931548)
-polygon = PackedVector2Array(-5, -8, 7, -8, 7, -15, 4, -15, 4, -47.1083, -2, -47.1083, -2, -14.9038, -5, -15)
+position = Vector2(-2, -5.83638)
+scale = Vector2(1, 1.12445)
+polygon = PackedVector2Array(-5, -8, 7, -8, 7, -15, 4, -15, 4, -39.2757, -2, -39.2757, -2, -14.9038, -5, -15)
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
