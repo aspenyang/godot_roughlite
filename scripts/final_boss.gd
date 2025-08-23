@@ -8,6 +8,7 @@ extends Entity
 @onready var boss_weapon: Node2D = $boss_weapon
 
 const RANGE_ATTACK = preload("res://scenes/range_attack.tscn")
+const FIRE = preload("res://scenes/fire.tscn")
 
 @onready var final_level = get_parent()
 
@@ -36,6 +37,9 @@ var cool_down
 
 var ranged_cooldown = 5
 
+const SPRINT_SPEED = 800
+const SPRINT_DISTANCE = 100
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -46,9 +50,9 @@ func _ready() -> void:
 	super._ready()
 	
 	boss_saber.visible = false
-	#attack_this_round = [["attack_saber","attack_dash"].pick_random(), "attack_range"]
-	#attack_stage_one = ["attack_saber","attack_dash"].pick_random()
-	attack_stage_one = "attack_saber"
+	#attack_this_round = [["attack_saber","attack_fire"].pick_random(), "attack_range"]
+	attack_stage_one = ["attack_saber","attack_fire"].pick_random()
+	#attack_stage_one = "attack_saber"
 	current_attack = attack_stage_one
 	
 	if attack_stage_one	== "attack_saber":
@@ -81,16 +85,22 @@ func _process(delta: float) -> void:
 
 func perform_attack():
 	print("perform attack")
-	is_attacking = true
+	#is_attacking = true
 	can_attack = false
 	
 	if current_attack == "attack_saber":
 		print("attack saber")
+		is_attacking = true
 		boss_weapon.look_at(player.global_position)
 		boss_weapon.rotation += deg_to_rad(90)
 		boss_saber.visible = true
 		await get_tree().create_timer(0.5).timeout
 		boss_animation.play("attack_saber")
+	elif current_attack == "attack_fire":
+		fire_attack()
+		print("attakc fire")
+	else:
+		return
 	await get_tree().create_timer(cool_down).timeout
 	can_attack = true
 
@@ -111,7 +121,11 @@ func ranged_attack():
 		instance.queue_free()
 	ranged_points.clear()
 		
-	
+
+func fire_attack():
+	var fire_ball = FIRE.instantiate()
+	add_child(fire_ball)
+
 func get_random_pos(points_array: Array):
 	var pos = Vector2.ZERO
 	for i in range(5):
