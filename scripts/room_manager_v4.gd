@@ -4,7 +4,7 @@ extends Node2D
 
 var current_room: Node = null
 var rooms_completed: int = 0
-const TOTAL_ROOMS: int = 3 # set to 3 for testing. Originally set to 7 or 8
+const TOTAL_ROOMS: int = 5 # set to 3 for testing. Originally set to 7 or 8
 
 var maze_used := false
 var reward_used := false

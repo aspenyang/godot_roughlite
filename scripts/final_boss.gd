@@ -52,12 +52,13 @@ func _ready() -> void:
 	boss_saber.visible = false
 	#attack_this_round = [["attack_saber","attack_fire"].pick_random(), "attack_range"]
 	attack_stage_one = ["attack_saber","attack_fire"].pick_random()
+	print(attack_stage_one)
 	#attack_stage_one = "attack_saber"
 	current_attack = attack_stage_one
 	
 	if attack_stage_one	== "attack_saber":
 		moving_dist = 40
-		cool_down = 5.0
+		cool_down = 3.0
 	else:
 		moving_dist = 80
 		cool_down = 4.0
@@ -116,7 +117,7 @@ func ranged_attack():
 		final_level.add_child(ranged_instance)
 		ranged_instances.append(ranged_instance)
 	
-	await get_tree().create_timer(1.5).timeout
+	await get_tree().create_timer(2.5).timeout
 	for instance in ranged_instances:
 		instance.queue_free()
 	ranged_points.clear()
