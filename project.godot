@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="rougelite"
-run/main_scene="uid://h3vj31gexpft"
+run/main_scene="uid://dfhcmmbuaxgg8"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
 
