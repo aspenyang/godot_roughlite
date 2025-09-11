@@ -6,6 +6,11 @@ extends Node2D
 @onready var exit: Area2D = $Exit
 @onready var door: Area2D = $Door
 
+# Overlay UI for ending transition
+@onready var overlay: CanvasLayer = $Overlay
+@onready var color_rect: ColorRect = $Overlay/ColorRect
+@onready var ending_text: Label = $Overlay/EndingText
+
 const main_layer = 0
 const SOURCE_ID = 0
 const wall_atlas_coords = Vector2i(6, 2)
@@ -22,11 +27,34 @@ func _ready() -> void:
 	exit.position = final_walls.map_to_local(Vector2i(x_dim/2, 0))
 	exit.visible = false
 	final_boss.position = final_walls.map_to_local(Vector2i(x_dim/2, y_dim/2))
+	
+	color_rect.visible = false
+
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass
+
+# Shows the ending transition: fade in, show text, then go to main menu
+func show_ending():
+	# Only handles boss victory transition in final level
+	color_rect.color = Color(0.2, 0.8, 0.4, 1)  # Joyful color, alpha 0
+	color_rect.modulate.a = 0  # Start fully transparent
+	ending_text.text = "Congratulations!"
+	ending_text.visible = false
+	color_rect.visible = true
+	# Fade in the color_rect
+	var tween = create_tween()
+	tween.tween_property(color_rect, "modulate:a", 0.5, 1.5)
+	tween.tween_callback(Callable(self, "_on_veil_faded_in"))
+	tween.play()
+
+# Called after the veil has faded in
+func _on_veil_faded_in():
+	ending_text.visible = true
+	await get_tree().create_timer(2.0).timeout
+	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
 	
 func draw_walls():
 	final_walls.clear()

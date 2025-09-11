@@ -169,6 +169,10 @@ func die():
 		if is_instance_valid(instance):
 			instance.queue_free()
 	active_ranged_attacks.clear()
-	
+
+	# Trigger ending transition (victory)
+	if final_level.has_method("show_ending"):
+		final_level.show_ending()
+
 	# Call the parent die function
 	super.die()
