@@ -33,4 +33,9 @@ position = Vector2(8, 0)
 script = ExtResource("4_rl7on")
 metadata/_custom_type_script = "uid://kmm2pjwmkbvu"
 
+[node name="HealthBar" type="ProgressBar" parent="."]
+offset_right = 4.0
+offset_bottom = 4.0
+show_percentage = false
+
 [connection signal="timeout" from="Summon_Timer" to="." method="_on_summon_timer_timeout"]

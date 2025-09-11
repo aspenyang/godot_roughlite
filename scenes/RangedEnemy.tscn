@@ -31,3 +31,8 @@ shape = SubResource("RectangleShape2D_wltc5")
 [node name="Health" type="Node" parent="."]
 script = ExtResource("4_r1k2w")
 metadata/_custom_type_script = "uid://kmm2pjwmkbvu"
+
+[node name="HealthBar" type="ProgressBar" parent="."]
+offset_right = 4.0
+offset_bottom = 4.0
+show_percentage = false
