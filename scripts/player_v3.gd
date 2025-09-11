@@ -5,6 +5,8 @@ extends Entity
 @onready var player_animation = $AnimationPlayer
 @onready var player_sword: Area2D = $PlayerSword
 
+@onready var ui_health_bar: ProgressBar = null  # Will be set in _ready()
+
 var player_max_health = 100
 
 var speed = 300  # Movement speed in pixels/second (for free movement)
@@ -31,6 +33,9 @@ func _ready() -> void:
 	#if current_room and current_room.has_node("TileMap"):
 		#var tilemap = current_room.get_node("TileMap") as TileMap
 		#tile_size = tilemap.cell_size.x  # assuming square tiles
+	
+	# Get reference to UI health bar
+	ui_health_bar = get_node("/root/Main/UI/PlayerHealthBar")
 
 	target_position = global_position
 	player_sword.visible = false
@@ -38,6 +43,36 @@ func _ready() -> void:
 	
 	max_health = player_max_health
 	super._ready()
+
+# Override the entity's health bar setup for player
+func setup_health_bar():
+	# Hide the entity health bar (we'll use UI health bar instead)
+	if health_bar:
+		health_bar.visible = false
+	
+	# Setup UI health bar
+	if ui_health_bar:
+		ui_health_bar.min_value = 0
+		ui_health_bar.max_value = max_health
+		ui_health_bar.value = max_health
+		ui_health_bar.show_percentage = false
+		
+		# Position and size through script
+		ui_health_bar.anchors_preset = Control.PRESET_BOTTOM_LEFT
+		ui_health_bar.position = Vector2(20, -50)  # 20px from left, 50px from bottom
+		ui_health_bar.size = Vector2(150, 20)      # 150px wide, 20px tall
+		
+		# Optional: Get screen size for responsive positioning
+		var screen_size = get_viewport().get_visible_rect().size
+		ui_health_bar.position = Vector2(20, screen_size.y - 50)
+
+# Override health change to update UI health bar
+func _on_health_changed(new_health: int):
+	super._on_health_changed(new_health)  # Call parent method for any prints/logic
+	
+	# Update UI health bar instead of entity health bar
+	if ui_health_bar:
+		ui_health_bar.value = new_health
 
 func set_current_room_scene(path: String) -> void:
 	current_room_scene_path = path

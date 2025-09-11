@@ -530,7 +530,26 @@ rotation = -0.523599
 script = ExtResource("7_tipki")
 metadata/_custom_type_script = "uid://kmm2pjwmkbvu"
 
+[node name="HealthBar" type="ProgressBar" parent="Player"]
+visible = false
+offset_right = 4.0
+offset_bottom = 4.0
+show_percentage = false
+
 [node name="RoomManager" type="Node2D" parent="."]
 script = ExtResource("5_tbgi4")
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="PlayerHealthBar" type="ProgressBar" parent="UI"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -21.0
+offset_top = -27.0
+offset_right = -17.0
+offset_bottom = -23.0
+grow_vertical = 0
+show_percentage = false
 
 [connection signal="animation_finished" from="Player/AnimationPlayer" to="Player" method="_on_animation_player_animation_finished"]
