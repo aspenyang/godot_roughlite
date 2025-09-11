@@ -37,6 +37,9 @@ var cool_down
 
 var ranged_cooldown = 5
 
+# Track active ranged attack instances
+var active_ranged_attacks = []
+
 const SPRINT_SPEED = 800
 const SPRINT_DISTANCE = 100
 
@@ -116,10 +119,13 @@ func ranged_attack():
 		ranged_instance.position = pos
 		final_level.add_child(ranged_instance)
 		ranged_instances.append(ranged_instance)
+		active_ranged_attacks.append(ranged_instance)  # Track this instance
 	
 	await get_tree().create_timer(2.5).timeout
 	for instance in ranged_instances:
-		instance.queue_free()
+		if is_instance_valid(instance):  # Check if instance still exists
+			instance.queue_free()
+			active_ranged_attacks.erase(instance)  # Remove from tracking
 	ranged_points.clear()
 		
 
@@ -155,3 +161,14 @@ func flash_hit():
 func on_hit(damage):
 	health.take_damage(damage)
 	flash_hit()
+
+# Override the die function to clean up ranged attacks
+func die():
+	# Clean up all active ranged attacks
+	for instance in active_ranged_attacks:
+		if is_instance_valid(instance):
+			instance.queue_free()
+	active_ranged_attacks.clear()
+	
+	# Call the parent die function
+	super.die()
