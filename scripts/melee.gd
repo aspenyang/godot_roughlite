@@ -97,8 +97,8 @@ func on_hit(damage):
 	health.take_damage(damage)
 	flash_hit()
 	
-func _on_health_changed(new_health: int):
-	print("%s health: %d" % [name, new_health])
+#func _on_health_changed(new_health: int):
+	#print("%s health: %d" % [name, new_health])
 	
 
 	

@@ -73,3 +73,8 @@ shape = SubResource("RectangleShape2D_bq4yf")
 [node name="Health" type="Node" parent="Melee"]
 script = ExtResource("4_iedip")
 metadata/_custom_type_script = "uid://kmm2pjwmkbvu"
+
+[node name="HealthBar" type="ProgressBar" parent="Melee"]
+offset_right = 4.0
+offset_bottom = 4.0
+show_percentage = false
