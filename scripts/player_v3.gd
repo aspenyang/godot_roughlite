@@ -60,11 +60,14 @@ func setup_health_bar():
 		# Position and size through script
 		ui_health_bar.anchors_preset = Control.PRESET_BOTTOM_LEFT
 		ui_health_bar.position = Vector2(20, -50)  # 20px from left, 50px from bottom
-		ui_health_bar.size = Vector2(150, 20)      # 150px wide, 20px tall
+		ui_health_bar.size = Vector2(200, 20)      # 150px wide, 20px tall
 		
 		# Optional: Get screen size for responsive positioning
 		var screen_size = get_viewport().get_visible_rect().size
 		ui_health_bar.position = Vector2(20, screen_size.y - 50)
+		
+		# Set color to red
+		ui_health_bar.modulate = Color.DEEP_PINK
 
 # Override health change to update UI health bar
 func _on_health_changed(new_health: int):

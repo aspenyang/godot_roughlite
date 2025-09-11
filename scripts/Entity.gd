@@ -38,3 +38,7 @@ func setup_health_bar():
 	
 	# Style the health bar
 	health_bar.show_percentage = false
+	
+	# Set health bar color to red
+	health_bar.modulate = Color.RED
+	# Alternative: health_bar.modulate = Color(1.0, 0.0, 0.0, 1.0)
