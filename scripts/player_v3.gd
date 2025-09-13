@@ -198,6 +198,8 @@ func flash_hit():
 		await get_tree().create_timer(0.2).timeout
 		$Sprite2D.modulate = Color.WHITE
 
+func _on_die():
+	TransitionManager.show_death_transition()
 
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 	if anim_name.begins_with("attack_"):
