@@ -77,7 +77,7 @@ static func load_game(slot: int) -> Dictionary:
 	var file := FileAccess.open(SAVE_PATHS[slot], FileAccess.READ)
 	if file == null:
 		return {}
-	var raw := file.get_var(false) # no object instantiation
+	var raw: Variant = file.get_var(false) # no object instantiation
 	file.close()
 	if typeof(raw) != TYPE_DICTIONARY:
 		return {}
