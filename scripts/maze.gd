@@ -4,6 +4,12 @@ extends Node2D
 @onready var spawn_node = $SpawnPoint
 @onready var entry_door = $Door
 @onready var exit_door = $Exit
+@onready var health_drain_timer: Timer = $HealthDrainTimer
+
+@export var drain_interval: float = 5.0
+@export var drain_amount: int = 5
+
+var player: Node2D = null
 
 var starting_pos = Vector2i()
 const main_layer = 0
@@ -42,6 +48,8 @@ var end_border: Vector2i
 
 func _ready() -> void:
 	
+	player = Globals.player
+	
 	while true:
 		walls_original.clear()
 		walkable_original.clear()
@@ -60,6 +68,9 @@ func _ready() -> void:
 	var exit_pos = Vector2i(end_border.x*2, end_border.y*2+1)
 	entry_door.position = tilemap.map_to_local(entry_pos)
 	exit_door.position = tilemap.map_to_local(exit_pos)
+	
+	health_drain_timer.wait_time = drain_interval
+	health_drain_timer.start()
 	
 
 func _input(event: InputEvent) -> void:
@@ -245,3 +256,8 @@ func check_connected(start: Vector2i, goal: Vector2i) -> bool:
 			if next in walkable_original and not visited.has(next):
 				open.append(next)
 	return false
+
+
+func _on_health_drain_timer_timeout() -> void:
+	if player and player.health: # player inherits from Entity so has health node
+		player.health.take_damage(drain_amount)
