@@ -417,5 +417,8 @@ text = "puzzle path"
 
 [node name="PuzzleTimer" type="Timer" parent="."]
 
+[node name="HealthDrainTimer" type="Timer" parent="."]
+
 [connection signal="body_entered" from="Exit" to="Exit" method="_on_body_entered"]
 [connection signal="body_exited" from="Exit" to="Exit" method="_on_body_exited"]
+[connection signal="timeout" from="HealthDrainTimer" to="." method="_on_health_drain_timer_timeout"]

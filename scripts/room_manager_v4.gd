@@ -152,7 +152,7 @@ func choose_combat_layout() -> String:
 		for i in range(2): #should be 24
 			pool.append("PROCEDURAL")
 		# Add combat_mob_03 only (12% chance)
-		for i in range(0): # should be 12
+		for i in range(12): # should be 12
 			pool.append(puzzle_path)  # combat_mob_03.tscn
 		# Add miniboss rooms (12% each)
 		for room_path in miniboss_rooms:
@@ -168,7 +168,7 @@ func choose_combat_layout() -> String:
 		for i in range(24): #should be 24
 			pool.append("PROCEDURAL")
 		# Add combat_mob_03 only (12% chance)
-		for i in range(1): #should be 20
+		for i in range(20): #should be 20
 			pool.append(puzzle_path)  # combat_mob_03.tscn
 
 	var chosen = pool[randi() % pool.size()]

@@ -25,6 +25,12 @@ const MAIN_LAYER = 0
 
 @onready var reveal_timer: Timer = $RevealTimer
 #@onready var puzzle_timer: Timer = $PuzzleTimer
+@onready var health_drain_timer: Timer = $HealthDrainTimer
+
+@export var drain_interval: float = 10.0
+@export var drain_amount: int = 5
+
+var player: Node2D = null
 
 var path: Array = []
 var path_index: int = 0
@@ -45,6 +51,11 @@ func _ready():
 	#puzzle_timer.wait_time = 15.0
 	reveal_timer.connect("timeout", Callable(self, "_on_RevealTimer_timeout"))
 	#puzzle_timer.connect("timeout", Callable(self, "_on_PuzzleTimer_timeout"))
+	
+	player = Globals.player
+	
+	health_drain_timer.wait_time = drain_interval
+	health_drain_timer.start()
 
 func draw_room():
 	tilemap.clear()
@@ -239,3 +250,8 @@ func player_stepped(tile_pos: Vector2i):
 	else:
 		print("Wrong tile! Resetting player.")
 		reset_player_position()
+
+
+func _on_health_drain_timer_timeout() -> void:
+	if player and player.health: # player inherits from Entity so has health node
+		player.health.take_damage(drain_amount)
