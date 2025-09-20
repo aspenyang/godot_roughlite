@@ -174,5 +174,4 @@ func die():
 	if final_level.has_method("show_ending"):
 		final_level.show_ending()
 
-	# Call the parent die function
 	super.die()

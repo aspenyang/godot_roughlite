@@ -5,6 +5,7 @@ extends Entity
 @export var speed: float = 80
 @export var attack_range: float = 20
 @export var attack_cooldown: float = 1.0  # seconds between attacks
+@export var damage: int = 10
 
 @export var separation_distance: float = 24   # desired spacing between enemies
 @export var separation_strength: float = 0.5  # how strong they push apart
@@ -62,8 +63,8 @@ func attack_player():
 
 	# If player is close enough, trigger hit animation
 	if player and global_position.distance_to(player.global_position) <= attack_range:
-		if player.has_method("flash_hit"):
-			player.flash_hit()
+		if player.has_method("on_hit"):
+			player.on_hit(damage)
 
 	# Start cooldown
 	await get_tree().create_timer(attack_cooldown).timeout

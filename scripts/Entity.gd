@@ -14,13 +14,13 @@ func _ready():
 		setup_health_bar()
 
 func _on_die():
-	#die()
+	die()
 	print("%s died" % self.name)
 	queue_free()
 
-#func die():
-	#print("%s died" % self.name)
-	#queue_free()
+func die():
+	print("%s died" % self.name)
+	queue_free()
 	
 func _on_health_changed(new_health: int):
 	print("%s health changed to %d" % [name, new_health])

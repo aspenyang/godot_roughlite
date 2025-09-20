@@ -40,7 +40,6 @@ script = ExtResource("1_gagl1")
 metadata/_custom_type_script = "uid://clhuntc7e7e5t"
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-visible = false
 position = Vector2(0, 9.53674e-07)
 scale = Vector2(0.25, 0.25)
 texture = ExtResource("2_723ie")
