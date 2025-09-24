@@ -23,9 +23,14 @@ var miniboss_rooms := [
 # Room weights (out of 100)
 var room_weights := {
 	"combat": 20, #should be 60
-	"maze": 100, #should be 20
-	"reward": 100 #should be 20
+	"maze": 20, #should be 20
+	"reward": 20 #should be 20
 }
+
+# --- New vars for exit gating ---
+var remaining_enemies := 0
+var current_exit_node: Node = null
+var exit_locked_for_combat := false
 
 func _ready():
 	load_next_room()
@@ -37,6 +42,9 @@ func _on_room_completed():
 func load_next_room():
 	if current_room:
 		current_room.queue_free()
+	remaining_enemies = 0
+	current_exit_node = null
+	exit_locked_for_combat = false
 	
 	var room_scene: PackedScene
 
@@ -52,8 +60,7 @@ func load_next_room():
 
 	match room_type:
 		"combat":
-			#scene_path = choose_combat_layout() #fiexed rooms picking
-			# Use procedural room layout
+			# Use procedural or fixed
 			var layout_choice = choose_combat_layout()
 			if layout_choice == "PROCEDURAL":
 				var generated_level = generate_combat()
@@ -92,10 +99,15 @@ func spawn_room(room_scene: PackedScene):
 	if Globals.player and Globals.player.has_method("set_current_room_scene"):
 		Globals.player.set_current_room_scene(room_scene.resource_path)
 
-	# Connect signal
+	# Connect exit signal
 	var exit_door = room_instance.get_node("Exit")
 	exit_door.connect("exit_triggered", Callable(self, "_on_room_completed"))
-
+	
+	# Decide if this room needs enemy clear gating
+	var path = room_scene.resource_path
+	var needs_clear = not (path.ends_with("reward.tscn") or path.ends_with("maze.tscn") or path.contains("final_level") or path.contains("puzzle_path"))
+	if needs_clear:
+		_setup_exit_lock_for_combat(room_instance, exit_door)
 
 # For procedural combat room
 func spawn_generated_room(level_container: Node2D):
@@ -109,100 +121,113 @@ func spawn_generated_room(level_container: Node2D):
 	else:
 		print("Warning: No SpawnPoint in this room!")
 		
-	# Connect exit signal from the room with visible exit
+	# Find the visible exit and connect
 	for child in level_container.get_children():
-		var exit_door = child.get_node("Exit")
-		print(exit_door.visible)
-		if exit_door.visible:
-			exit_door.connect("exit_triggered", Callable(self, "_on_room_completed"))
-			print("connected")
-			break
+		if child.has_node("Exit"):
+			var exit_door = child.get_node("Exit")
+			if exit_door.visible:
+				exit_door.connect("exit_triggered", Callable(self, "_on_room_completed"))
+				_setup_exit_lock_for_combat(level_container, exit_door)
+				break
+	
+	# Inform player of current room
+	if Globals.player and Globals.player.has_method("set_current_room_scene"):
+		Globals.player.set_current_room_scene("res://scenes/rooms/level_map.tscn")
 
+# --- Enemy tracking & exit locking helpers ---
+func _setup_exit_lock_for_combat(room_root: Node, exit_node: Node):
+	current_exit_node = exit_node
+	remaining_enemies = 0
+	exit_locked_for_combat = true
+	# Collect existing enemies
+	var enemies: Array = []
+	_collect_enemies(room_root, enemies)
+	for e in enemies:
+		_register_enemy(e)
+	# Lock exit if any enemies
+	if remaining_enemies > 0 and exit_node.has_method("set_exit_enabled"):
+		exit_node.set_exit_enabled(false)
+	else:
+		exit_locked_for_combat = false  # No enemies, keep it open
+
+func _collect_enemies(node: Node, out_list: Array):
+	for c in node.get_children():
+		if c is Entity and c.name != "Player":
+			out_list.append(c)
+		_collect_enemies(c, out_list)
+
+func _register_enemy(enemy: Node):
+	if not enemy or not is_instance_valid(enemy):
+		return
+	if not enemy.has_node("Health"):
+		return
+	var health = enemy.get_node("Health")
+	if not health.is_connected("died", Callable(self, "_on_enemy_died")):
+		health.connect("died", Callable(self, "_on_enemy_died"))
+	remaining_enemies += 1
+
+func _on_enemy_died():
+	remaining_enemies -= 1
+	if remaining_enemies <= 0 and exit_locked_for_combat and current_exit_node and current_exit_node.has_method("set_exit_enabled"):
+		current_exit_node.set_exit_enabled(true)
+		exit_locked_for_combat = false
+
+# (If later you want summoned enemies counted, call _register_enemy(new_enemy) after spawning.)
+
+# --- Existing functions below (unchanged) ---
 
 func choose_next_room_type() -> String:
 	var choices = []
-
 	if not maze_used and room_weights["maze"] > 0:
 		for i in range(room_weights["maze"]):
 			choices.append("maze")
-
 	if not reward_used and room_weights["reward"] > 0:
 		for i in range(room_weights["reward"]):
 			choices.append("reward")
-
 	if room_weights["combat"] > 0:
 		for i in range(room_weights["combat"]):
 			choices.append("combat")
-
 	if choices.size() == 0:
-		return "combat"  # fallback
-		
+		return "combat"
 	return choices[randi() % choices.size()]
 
-# 🔥 Combat layout selection with miniboss rules
 func choose_combat_layout() -> String:
 	var level = rooms_completed + 1
 	var pool: Array[String] = []
-
 	var miniboss_allowed = level >= 3 and level <= TOTAL_ROOMS - 2 and miniboss_count < MAX_MINIBOSS
-
 	if miniboss_allowed:
-		
-		# procedural combat room
-		for i in range(2): #should be 24
+		for i in range(2):
 			pool.append("PROCEDURAL")
-		# Add combat_mob_03 only (12% chance)
-		for i in range(12): # should be 12
-			pool.append(puzzle_path)  # combat_mob_03.tscn
-		# Add miniboss rooms (12% each)
+		for i in range(12):
+			pool.append(puzzle_path)
 		for room_path in miniboss_rooms:
-			for i in range(12): 
+			for i in range(12):
 				pool.append(room_path)
-		
 	else:
-		# 20% per mob layout
-		#for room_path in mob_rooms:
-			#for i in range(20):
-				#pool.append(room_path)
-		# procedural combat room
-		for i in range(24): #should be 24
+		for i in range(24):
 			pool.append("PROCEDURAL")
-		# Add combat_mob_03 only (12% chance)
-		for i in range(20): #should be 20
-			pool.append(puzzle_path)  # combat_mob_03.tscn
-
+		for i in range(20):
+			pool.append(puzzle_path)
 	var chosen = pool[randi() % pool.size()]
-
-	# Track miniboss usage
 	if miniboss_rooms.has(chosen):
 		miniboss_count += 1
-
 	return chosen
-	
-# Helper method
+
 func add_to_set(set_array: Array, pos: Vector2):
 	if not pos in set_array:
 		set_array.append(pos)
 
-# Generate combat level map
 func generate_combat():
 	var room_layout = []
-	
-	# Create parent container
 	var level_container = Node2D.new()
 	level_container.name = "GeneratedLevel"
-	
-	var room_count = randi() % 2 + 5 #there will be 5 or 6 rooms including the base
-	
-	# Place base
+	var room_count = randi() % 2 + 5
 	var base = load("res://scenes/rooms/level_map.tscn").instantiate()
 	base.name = "level_room0"
 	room_layout.append(Vector2(0, 0))
 	base.close_all_paths()
 	base.get_node("Door").visible = true
 	base.get_node("Exit").visible = false
-
-	#Open path(s)
 	var first_rooms = randi() % 3
 	match first_rooms:
 		0:
@@ -216,39 +241,26 @@ func generate_combat():
 			base.north_pass()
 			room_layout.append(Vector2(1, 0))
 			base.east_pass()
-	
 	level_container.add_child(base)
-	
 	while room_layout.size() < room_count:
 		for i in range(1, room_layout.size()):
-			# South
 			if randf() < 0.25 and room_layout.size() < room_count:
 				add_to_set(room_layout, Vector2(room_layout[i].x, room_layout[i].y + 1))
-			# West
 			if randf() < 0.25 and room_layout.size() < room_count:
 				add_to_set(room_layout, Vector2(room_layout[i].x - 1, room_layout[i].y))
-			# North
 			if randf() < 0.25 and room_layout.size() < room_count:
 				add_to_set(room_layout, Vector2(room_layout[i].x, room_layout[i].y - 1))
-			# East
 			if randf() < 0.25 and room_layout.size() < room_count:
 				add_to_set(room_layout, Vector2(room_layout[i].x + 1, room_layout[i].y))
-	
 	print(room_layout.size()," ", room_count)
-	
-	# Make sure if the north and east room of the base exit, the path(s) will be open
 	if Vector2(0, -1) in room_layout:
 		base.north_pass()
 	if Vector2(1, 0) in room_layout:
 		base.east_pass()
-	
-	var if_exit = false # for activate exit
-	
+	var if_exit = false
 	var melee = preload("res://scenes/melee.tscn")
 	var ranged_enemy = preload("res://scenes/RangedEnemy.tscn")
-	#var enemy_pool = [melee,ranged_enemy]
 	var enemy_pool = [melee if randf() < 0.5 else ranged_enemy, melee if randf() < 0.5 else ranged_enemy,]
-	
 	for i in range(room_layout.size()-1, 0, -1):
 		var pos = room_layout[i]
 		var unit = load("res://scenes/rooms/level_map.tscn").instantiate()
@@ -258,32 +270,20 @@ func generate_combat():
 		entry.visible = false
 		unit.name = "level_room%d"%i
 		unit.close_all_paths()
-		# South
 		if Vector2(pos.x, pos.y + 1 ) in room_layout:
 			unit.south_pass()
-		# West
 		if Vector2(pos.x - 1, pos.y) in room_layout:
 			unit.west_pass()
-		# North (If the north room is the base, not connect)
 		if Vector2(pos.x, pos.y - 1) in room_layout and Vector2(pos.x, pos.y - 1) != Vector2(0, 0):
 			unit.north_pass()
-		# East (If the east room is the base, not connect)
 		if Vector2(pos.x + 1, pos.y) in room_layout and Vector2(pos.x + 1, pos.y) != Vector2(0, 0):
 			unit.east_pass()
-			
-		# Spawn enemies (skip base room, which is at index 0 in the loop range)
 		spawn_enemies_in_room(unit, enemy_pool)
-		# Place the room
 		unit.position = pos * 320
-		
-		# Place exit door
 		if not if_exit and unit.get_node("NorthWall").visible:
 			exit_door.visible = true
 			if_exit = true
-		
 		level_container.add_child(unit)
-	
-	# Inform player of current room
 	if Globals.player and Globals.player.has_method("set_current_room_scene"):
 		Globals.player.set_current_room_scene("res://scenes/rooms/level_map.tscn")
 	return level_container
@@ -293,32 +293,22 @@ func spawn_enemies_in_room(room: Node2D, enemy_pool: Array):
 	var room_height = 256
 	var margin = 64
 	var min_distance = 32
-	
-	var enemy_count = 1 # should be randi_range(2, 3)
-	
+	var enemy_count = 1
 	var spawn_positions = []
-	
 	for i in range(enemy_count):
 		var enemy = enemy_pool[randi() % enemy_pool.size()].instantiate()
 		var valid_position = false
 		var attempts = 0
 		var random_pos = Vector2.ZERO
-		
-		# Try to find a valid position
 		while not valid_position and attempts < 15:
 			random_pos.x = randf_range(0 + margin, room_width - margin)
 			random_pos.y = randf_range(0 + margin, room_height - margin)
-		
-		# Check distance from other enemies
 			valid_position = true
 			for pos in spawn_positions:
 				if random_pos.distance_to(pos) < min_distance:
 					valid_position = false
 					break
-			
 			attempts += 1
-		
 		enemy.position = random_pos
 		spawn_positions.append(random_pos)
 		room.add_child(enemy)
-	

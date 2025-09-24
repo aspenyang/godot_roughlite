@@ -53,6 +53,9 @@ func _ready():
 	#puzzle_timer.connect("timeout", Callable(self, "_on_PuzzleTimer_timeout"))
 	
 	player = Globals.player
+	# Lock exit at start; player must complete path
+	if exit_door and exit_door.has_method("set_exit_enabled"):
+		exit_door.set_exit_enabled(false)
 	
 	health_drain_timer.wait_time = drain_interval
 	health_drain_timer.start()
@@ -246,7 +249,8 @@ func player_stepped(tile_pos: Vector2i):
 		print("Correct step:", tile_pos, "Progress:", path_index, "/", path.size())
 		if path_index == path.size() - 1:
 			print("Player completed the path!")
-			# Trigger completion event here
+			if exit_door and exit_door.has_method("set_exit_enabled"):
+				exit_door.set_exit_enabled(true)
 	else:
 		print("Wrong tile! Resetting player.")
 		reset_player_position()
