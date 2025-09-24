@@ -14,41 +14,38 @@ class_name SaveManager
 #   get_default_data(slot_index, rounds_total=10) -> Dictionary
 #   upsert_and_save(slot, mutate_func: Callable, rounds_total=10) -> Dictionary
 #
-#   begin_round_if_needed(slot)
-#   complete_round_success(slot, final_round: bool)
-#   fail_round(slot, final_round: bool, policy_add_time := false)
+#   begin_level_if_needed(slot)
+#   complete_level_success(slot, final_level: bool)
+#   fail_level(slot, final_level: bool, policy_add_time := false)
 #   mark_interrupted(slot)
 #
-#   set_checkpoint(slot, scene_path: String, level_id: int, player_state := {}, rounds_total := 10)
+#   set_checkpoint(slot, scene_path: String, level_id: int, levels_total := 10)
 #   clear_checkpoint(slot)
 #   has_resume_checkpoint(slot) -> bool
 #
 #   update_player_state(slot, player_state: Dictionary)
 #   extract_player_state(data: Dictionary) -> Dictionary
 #
-# Data Shape (dictionary):
+# Data Shape (dictionary) JSON (pretty-printed):
 # {
-#	"slot": 1,
-#	"version": 1,
-#	"rounds_total": 10,
-#	"rounds_completed": 0,
-#	"round_times": [],
-#	"current_round_start_time": 0.0,
-#	"last_result": "",
-#	"final_status": "in_progress",        # "in_progress" | "success" | "fail"
-#	"interrupted": false,
-#	"checkpoint": {                       # Present only if mid-run / at level entry
-#		"scene_path": "res://scenes/Level1.tscn",
-#		"level_id": 1,
-#		"entered_unix_time": 0.0,
-#		"player_state": {
-#			"hp": 50,
-#			"max_hp": 50,
-#			"inventory": [],                # optional future expansion
-#			"seed": 0                       # procedural seed, optional
-#		}
-#	},
-#	"timestamp": "",
+#   "slot": 1,
+#   "version": 1,
+#   "runs_completed": 0,
+#   "levels_total": 10,
+#   "levels_completed": 0,
+#   "level_times": [],
+#   "current_level_start_time": 0.0,
+#   "last_result": "",                      # result of last finished level
+#   "final_status": "in_progress",           # in_progress | success | fail (run status)
+#   "interrupted": false,
+#   "maze_used": false,
+#   "reward_used": false,
+#   "checkpoint": {                          # present only if mid-run / at level entry
+#       "scene_path": "res://scenes/Level1.tscn",
+#       "level_id": 1,
+#       "entered_unix_time": 0.0
+#   },
+#   "timestamp": "2025-09-25T10:00:00"
 # }
 #
 # ==============================================
@@ -56,10 +53,11 @@ class_name SaveManager
 const SAVE_SLOTS: int = 3
 const DATA_VERSION: int = 1
 
+# JSON save file paths (no legacy migration; old .save files ignored)
 const SAVE_PATHS: Array[String] = [
-	"user://save_slot_1.save",
-	"user://save_slot_2.save",
-	"user://save_slot_3.save"
+	"user://save_slot_1.json",
+	"user://save_slot_2.json",
+	"user://save_slot_3.json"
 ]
 
 # -------------- Public Basic API --------------
@@ -77,11 +75,13 @@ static func load_game(slot: int) -> Dictionary:
 	var file := FileAccess.open(SAVE_PATHS[slot], FileAccess.READ)
 	if file == null:
 		return {}
-	var raw: Variant = file.get_var(false) # no object instantiation
+	var text := file.get_as_text()
 	file.close()
-	if typeof(raw) != TYPE_DICTIONARY:
+	var parsed = JSON.parse_string(text)
+	if typeof(parsed) != TYPE_DICTIONARY:
+		push_warning("SaveManager: JSON root not dictionary for slot %d" % slot)
 		return {}
-	var d: Dictionary = raw
+	var d: Dictionary = parsed
 	d = _apply_defaults_and_migrate(d)
 	return d
 
@@ -92,7 +92,8 @@ static func save_game(slot: int, data: Dictionary) -> bool:
 	if file == null:
 		push_warning("SaveManager: Could not open file for writing: %s" % SAVE_PATHS[slot])
 		return false
-	file.store_var(data, false)
+	var json_text := JSON.stringify(data, "  ")
+	file.store_string(json_text)
 	file.close()
 	return true
 
@@ -102,26 +103,29 @@ static func get_all_slots_info() -> Array:
 		arr.append(load_game(i))
 	return arr
 
-static func get_default_data(slot_index: int, rounds_total: int = 10) -> Dictionary:
+static func get_default_data(slot_index: int, levels_total: int = 10) -> Dictionary:
 	return {
 		"slot": slot_index + 1,
 		"version": DATA_VERSION,
-		"rounds_total": rounds_total,
-		"rounds_completed": 0,
-		"round_times": [],
-		"current_round_start_time": 0.0,
+		"runs_completed": 0,
+		"levels_total": levels_total,
+		"levels_completed": 0,
+		"level_times": [],
+		"current_level_start_time": 0.0,
 		"last_result": "",
 		"final_status": "in_progress",
 		"interrupted": false,
+		"maze_used": false,
+		"reward_used": false,
 		"checkpoint": {},
 		"timestamp": ""
 	}
 
 # Transaction / upsert style change
-static func upsert_and_save(slot: int, mutate_func: Callable, rounds_total: int = 10) -> Dictionary:
+static func upsert_and_save(slot: int, mutate_func: Callable, levels_total: int = 10) -> Dictionary:
 	var data := load_game(slot)
 	if data.is_empty():
-		data = get_default_data(slot, rounds_total)
+		data = get_default_data(slot, levels_total)
 	mutate_func.call(data)
 	data["timestamp"] = _make_timestamp()
 	save_game(slot, data)
@@ -129,63 +133,67 @@ static func upsert_and_save(slot: int, mutate_func: Callable, rounds_total: int 
 
 # -------------- Round Helpers --------------
 
-static func begin_round_if_needed(slot: int) -> Dictionary:
+static func begin_level_if_needed(slot: int) -> Dictionary:
 	return upsert_and_save(slot, func(d):
-		if d.get("current_round_start_time", 0.0) <= 0.0:
-			d["current_round_start_time"] = _now()
+		if d.get("current_level_start_time", 0.0) <= 0.0:
+			d["current_level_start_time"] = _now()
 			d["interrupted"] = false
 			d["last_result"] = ""
 	)
 
-static func complete_round_success(slot: int, final_round: bool) -> Dictionary:
+static func complete_level_success(slot: int, final_level: bool) -> Dictionary:
 	return upsert_and_save(slot, func(d):
-		var start_time: float = d.get("current_round_start_time", 0.0)
+		var start_time: float = d.get("current_level_start_time", 0.0)
 		if start_time > 0.0:
 			var duration = _now() - start_time
-			d["round_times"].append(duration)
-			d["rounds_completed"] = int(d.get("rounds_completed", 0)) + 1
-		d["current_round_start_time"] = 0.0
+			d["level_times"].append(duration)
+			d["levels_completed"] = int(d.get("levels_completed", 0)) + 1
+		d["current_level_start_time"] = 0.0
 		d["last_result"] = "success"
-		# Clear checkpoint because round finished
 		if d.has("checkpoint"):
 			d.erase("checkpoint")
-		if final_round:
+		if final_level:
 			d["final_status"] = "success"
+			# End of run reset flags
+			d["maze_used"] = false
+			d["reward_used"] = false
+			d["runs_completed"] = int(d.get("runs_completed", 0)) + 1
 	)
 
-static func fail_round(slot: int, final_round: bool, policy_add_time: bool = false) -> Dictionary:
+static func fail_level(slot: int, final_level: bool, policy_add_time: bool = false) -> Dictionary:
 	return upsert_and_save(slot, func(d):
-		var start_time: float = d.get("current_round_start_time", 0.0)
+		var start_time: float = d.get("current_level_start_time", 0.0)
 		if policy_add_time and start_time > 0.0:
 			var duration = _now() - start_time
-			d["round_times"].append(duration)
-			# Usually don't increment rounds_completed on failure
-		d["current_round_start_time"] = 0.0
+			d["level_times"].append(duration)
+		d["current_level_start_time"] = 0.0
 		d["last_result"] = "fail"
-		if final_round:
+		if final_level:
 			d["final_status"] = "fail"
-		# Keep checkpoint if you want to retry from start of level; remove if not:
-		# (Policy decision) For a fail you might KEEP the checkpoint so user restarts level.
+			d["maze_used"] = false
+			d["reward_used"] = false
+			d["runs_completed"] = int(d.get("runs_completed", 0)) + 1
+		# Policy: keep checkpoint? For failure we keep so player can retry; adjust if needed.
 	)
 
 static func mark_interrupted(slot: int) -> Dictionary:
 	return upsert_and_save(slot, func(d):
-		if d.get("current_round_start_time", 0.0) > 0.0:
+		if d.get("current_level_start_time", 0.0) > 0.0:
 			d["interrupted"] = true
 	)
 
 # -------------- Checkpoint Management --------------
 
-static func set_checkpoint(slot: int, scene_path: String, level_id: int, player_state: Dictionary = {}, rounds_total: int = 10) -> Dictionary:
+static func set_checkpoint(slot: int, scene_path: String, level_id: int, levels_total: int = 10) -> Dictionary:
 	return upsert_and_save(slot, func(d):
-		# Ensure round started
-		if d.get("current_round_start_time", 0.0) <= 0.0:
-			d["current_round_start_time"] = _now()
+		if d.get("levels_total", 0) != levels_total:
+			d["levels_total"] = levels_total
+		if d.get("current_level_start_time", 0.0) <= 0.0:
+			d["current_level_start_time"] = _now()
 		d["checkpoint"] = {
 			"scene_path": scene_path,
 			"level_id": level_id,
-			"entered_unix_time": _now(),
-			"player_state": player_state
+			"entered_unix_time": _now()
 		}
 		d["interrupted"] = false
 	)
@@ -204,27 +212,15 @@ static func has_resume_checkpoint(slot: int) -> bool:
 		return false
 	if not d.has("checkpoint"):
 		return false
-	# Optional: also require interrupted OR current_round_start_time > 0
 	return true
 
 # -------------- Player State Helpers --------------
 
-static func update_player_state(slot: int, player_state: Dictionary) -> Dictionary:
-	return upsert_and_save(slot, func(d):
-		if not d.has("checkpoint"):
-			return
-		var cp: Dictionary = d["checkpoint"]
-		cp["player_state"] = player_state
-		d["checkpoint"] = cp
-	)
+static func update_player_state(slot: int, _player_state: Dictionary) -> Dictionary:
+	# Deprecated: Player state no longer stored. Return data unchanged.
+	return load_game(slot)
 
-static func extract_player_state(data: Dictionary) -> Dictionary:
-	if data.has("checkpoint"):
-		var cp = data["checkpoint"]
-		if typeof(cp) == TYPE_DICTIONARY and cp.has("player_state"):
-			var ps = cp["player_state"]
-			if typeof(ps) == TYPE_DICTIONARY:
-				return ps
+static func extract_player_state(_data: Dictionary) -> Dictionary:
 	return {}
 
 # -------------- Internal Helpers --------------
@@ -242,37 +238,56 @@ static func _make_timestamp() -> String:
 	]
 
 static func _apply_defaults_and_migrate(d: Dictionary) -> Dictionary:
-	# If missing version, treat as legacy
 	if not d.has("version"):
-		d["version"] = 1
-	
-	# Example future migration scaffold:
-	# if d["version"] < 2:
-	#     # transform or add keys
-	#     d["version"] = 2
-	
-	# Required keys & defaults
+		d["version"] = DATA_VERSION
+
+	# Migration from old 'rounds_*' schema if present (best-effort)
+	if d.has("rounds_total") and not d.has("levels_total"):
+		d["levels_total"] = d.get("rounds_total", 10)
+	if d.has("rounds_completed") and not d.has("levels_completed"):
+		d["levels_completed"] = d.get("rounds_completed", 0)
+	if d.has("round_times") and not d.has("level_times"):
+		d["level_times"] = d.get("round_times", [])
+	if d.has("current_round_start_time") and not d.has("current_level_start_time"):
+		d["current_level_start_time"] = d.get("current_round_start_time", 0.0)
+
+	# Remove deprecated keys (optional cleanup)
+	d.erase("rounds_total")
+	d.erase("rounds_completed")
+	d.erase("round_times")
+	d.erase("current_round_start_time")
+
 	var required := {
 		"slot": 1,
 		"version": DATA_VERSION,
-		"rounds_total": 10,
-		"rounds_completed": 0,
-		"round_times": [],
-		"current_round_start_time": 0.0,
+		"runs_completed": 0,
+		"levels_total": 10,
+		"levels_completed": 0,
+		"level_times": [],
+		"current_level_start_time": 0.0,
 		"last_result": "",
 		"final_status": "in_progress",
 		"interrupted": false,
+		"maze_used": false,
+		"reward_used": false,
 		"checkpoint": {},
 		"timestamp": ""
 	}
 	for k in required.keys():
 		if not d.has(k):
 			d[k] = required[k]
-	
-	# Type normalizations
-	if typeof(d["round_times"]) != TYPE_ARRAY:
-		d["round_times"] = []
+
+	if typeof(d["level_times"]) != TYPE_ARRAY:
+		d["level_times"] = []
 	if typeof(d["checkpoint"]) != TYPE_DICTIONARY:
 		d["checkpoint"] = {}
-	
+
 	return d
+
+# Backwards compatibility wrappers (optional). Keep old method names so existing calls won't break.
+static func begin_round_if_needed(slot: int) -> Dictionary:
+	return begin_level_if_needed(slot)
+static func complete_round_success(slot: int, final_round: bool) -> Dictionary:
+	return complete_level_success(slot, final_round)
+static func fail_round(slot: int, final_round: bool, policy_add_time: bool=false) -> Dictionary:
+	return fail_level(slot, final_round, policy_add_time)
