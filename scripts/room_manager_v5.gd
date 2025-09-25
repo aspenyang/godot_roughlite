@@ -4,14 +4,17 @@ extends Node2D
 
 var current_room: Node = null
 var rooms_completed: int = 0
-#const TOTAL_ROOMS: int = 5 # set to 5 for testing. Originally set to 7 or 8
-var  total_rooms = Globals.TOTAL_ROOMS
+const TOTAL_ROOMS: int = 5 # set to 5 for testing. Originally set to 7 or 8
+
 
 var maze_used := false
 var reward_used := false
 
 var miniboss_count := 0
 const MAX_MINIBOSS := 1
+
+# save data 
+var dynamic_data : Dictionary = {}
 
 # path for puzzle level
 var puzzle_path = "res://scenes/rooms/puzzle_path.tscn"
@@ -36,6 +39,27 @@ var exit_locked_for_combat := false
 func _ready():
 	load_next_room()
 
+func fresh_data():
+	rooms_completed = 0
+	maze_used = false
+	reward_used = false
+	miniboss_count = 0
+	dynamic_data = {
+		"slot": Globals.slot,
+		"levels_total": TOTAL_ROOMS,
+		"last_result": "",
+		"in_progress": true,
+		"levels_completed": 0,
+		"maze_used": maze_used,
+		"reward_used": reward_used,
+		"miniboss_count": miniboss_count,
+		"current_level": "",
+		"player_state":  {
+			"current_health": player.max_health,
+			"max_health": player.max_health
+		}
+	}
+
 func _on_room_completed():
 	print("Room completed! Loading next room...")
 	load_next_room()
@@ -51,7 +75,7 @@ func load_next_room():
 	var room_scene: PackedScene
 
 	# Final boss room
-	if rooms_completed == total_rooms - 1:
+	if rooms_completed == TOTAL_ROOMS - 1:
 		room_scene = load("res://scenes/rooms/final_level.tscn")
 		spawn_room(room_scene)
 		rooms_completed += 1
@@ -196,7 +220,7 @@ func choose_next_room_type() -> String:
 func choose_combat_layout() -> String:
 	var level = rooms_completed + 1
 	var pool: Array[String] = []
-	var miniboss_allowed = level >= 3 and level <= total_rooms - 2 and miniboss_count < MAX_MINIBOSS
+	var miniboss_allowed = level >= 3 and level <= TOTAL_ROOMS - 2 and miniboss_count < MAX_MINIBOSS
 	if miniboss_allowed:
 		for i in range(2):
 			pool.append("PROCEDURAL")
