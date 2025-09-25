@@ -30,3 +30,8 @@ func heal(amount: int):
 		return
 	current_health = min(max_health, current_health + amount)
 	emit_signal("health_changed", current_health)
+	
+func set_health(health: int):
+	if health > 0:
+		current_health = health
+		emit_signal("health_changed", current_health)

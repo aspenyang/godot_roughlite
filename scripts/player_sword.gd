@@ -12,10 +12,10 @@ func _process(_delta) -> void:
 	pass
 
 func _on_body_entered(body) -> void:
-	print(body)
+	#print(body)
 	if body.is_in_group("enemies"):
 		body.on_hit(damage)
-		print("sword hit ", body, "sword mask ", collision_mask)
+		#print("sword hit ", body, "sword mask ", collision_mask)
 		
 func set_damage(new_damage):
 	damage = new_damage

@@ -51,7 +51,9 @@ func _on_load_pressed():
 	# Show a message or implement load logic later
 	Globals.new_game = false
 	#print(Globals.new_game)
-	print("Load Game pressed (feature coming soon)")
+	#print("Load Game pressed (feature coming soon)")
+	get_tree().change_scene_to_file("res://scenes/main.tscn")
+	
 
 # Exit the game
 func _on_exit_pressed():

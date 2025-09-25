@@ -24,7 +24,8 @@ func _ready():
 	# Get player reference
 	player = Globals.player
 	if player:
-		print("Ranged enemy found player: ", player.name)
+		#print("Ranged enemy found player: ", player.name)
+		pass
 	else:
 		print("Warning: Ranged enemy could not find player!")
 	

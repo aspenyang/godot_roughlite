@@ -40,7 +40,12 @@ func _ready():
 	if Globals.new_game:
 		fresh_data()
 	else:
-		pass
+		SaveManagerV2.load_save()
+		Globals.dynamic_data["loaded"] = true
+		dynamic_data = Globals.dynamic_data
+		rooms_completed = dynamic_data["levels_completed"]
+		var hp = dynamic_data["player_state"]["current_health"]
+		player.get_node("Health").set_health(hp)
 	load_next_room()
 
 func fresh_data():
@@ -90,6 +95,9 @@ func load_next_room():
 	if rooms_completed == TOTAL_ROOMS - 1:
 		room_scene = load("res://scenes/rooms/final_level.tscn")
 		spawn_room(room_scene)
+		update_data("")
+		Globals.dynamic_data = dynamic_data
+		SaveManagerV2.write_save(dynamic_data)
 		rooms_completed += 1
 		return
 

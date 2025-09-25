@@ -85,3 +85,24 @@ func write_save(data: Dictionary) -> bool:
 
 func load_save():
 	var slot = Globals.slot
+	var path := _get_save_path(int(slot))
+	if not FileAccess.file_exists(path):
+		print("No save file for slot ", slot, " at ", path)
+		return false
+
+	var f := FileAccess.open(path, FileAccess.READ)
+	if f == null:
+		push_error("load_save: failed to open '%s' (code %d)" % [path, FileAccess.get_open_error()])
+		return false
+
+	var json_text := f.get_as_text()
+	f.close()
+
+	var parsed = JSON.parse_string(json_text)
+	if typeof(parsed) != TYPE_DICTIONARY:
+		push_error("load_save: parsed data is not a Dictionary for '%s'" % [path])
+		return false
+
+	Globals.dynamic_data = parsed
+	print("Loaded save for slot ", slot, ": ", path)
+	return true
