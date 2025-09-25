@@ -88,7 +88,7 @@ func damage_entity(body: Node):
 	if body.has_method("on_hit") and body.name != "RangedEnemy":
 		body.on_hit(damage)
 
-		print(body.name + " hit by explosion!")
+		#print(body.name + " hit by explosion!")
 	
 
 func create_explosion_effect():

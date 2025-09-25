@@ -47,6 +47,7 @@ func _ready():
 		rooms_completed = dynamic_data["levels_completed"]
 		var hp = dynamic_data["player_state"]["current_health"]
 		player.get_node("Health").set_health(hp)
+		print("---  ", dynamic_data,"  ---")
 	load_next_room()
 
 func fresh_data():
@@ -93,6 +94,7 @@ func load_next_room():
 	var room_scene: PackedScene
 
 	# Final boss room
+	print("room comp ", rooms_completed," level comp ", dynamic_data["levels_completed"])
 	if rooms_completed == TOTAL_ROOMS - 1:
 		room_scene = load("res://scenes/rooms/final_level.tscn")
 		spawn_room(room_scene)
@@ -100,10 +102,13 @@ func load_next_room():
 		dynamic_data["loaded"] = false
 		Globals.dynamic_data = dynamic_data
 		SaveManagerV2.write_save(dynamic_data)
+		print(dynamic_data)
 		rooms_completed += 1
 		return
 
 	if dynamic_data["loaded"] and dynamic_data["current_level"] != "":
+		dynamic_data["loaded"] = false
+		Globals.dynamic_data = dynamic_data
 		if dynamic_data["current_level"] == "PROCEDURAL":
 			var generated_level = generate_combat()
 			spawn_generated_room(generated_level)
@@ -111,7 +116,6 @@ func load_next_room():
 			room_scene = load(dynamic_data["current_level"])
 			spawn_room(room_scene)
 		rooms_completed += 1
-		dynamic_data["loaded"] = false
 		return
 			
 		
@@ -147,6 +151,7 @@ func load_next_room():
 	#print(player.current_room_scene_path)
 	update_data(scene_path)
 	Globals.dynamic_data = dynamic_data
+	print("here print")
 	SaveManagerV2.print_info()
 	SaveManagerV2.write_save(dynamic_data)
 	rooms_completed += 1
@@ -269,7 +274,7 @@ func choose_combat_layout() -> String:
 	var pool: Array[String] = []
 	var miniboss_allowed = level >= 3 and level <= TOTAL_ROOMS - 2 and miniboss_count < MAX_MINIBOSS
 	if miniboss_allowed:
-		for i in range(2):
+		for i in range(20):
 			pool.append("PROCEDURAL")
 		for i in range(12):
 			pool.append(puzzle_path)
