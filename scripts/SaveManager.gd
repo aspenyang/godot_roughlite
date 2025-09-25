@@ -1,5 +1,5 @@
 extends Node
-class_name SaveManager
+#class_name SaveManager
 
 # ==============================================
 # SaveManager

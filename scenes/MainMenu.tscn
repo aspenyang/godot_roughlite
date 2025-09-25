@@ -47,3 +47,18 @@ text = "Load Game"
 [node name="ExitGame" type="Button" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
 text = "Exit Game"
+
+[node name="Slots" type="VBoxContainer" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Slot1" type="Button" parent="CenterContainer/VBoxContainer/Slots"]
+layout_mode = 2
+text = "Save 1"
+
+[node name="Slot2" type="Button" parent="CenterContainer/VBoxContainer/Slots"]
+layout_mode = 2
+text = "Save 2"
+
+[node name="Slot3" type="Button" parent="CenterContainer/VBoxContainer/Slots"]
+layout_mode = 2
+text = "Save 3"
