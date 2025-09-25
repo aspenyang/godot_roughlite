@@ -77,9 +77,7 @@ func _on_room_completed():
 	load_next_room()
 
 func load_next_room():
-	#SaveManagerV2.print_info()
-	Globals.dynamic_data = dynamic_data
-	
+
 	if current_room:
 		current_room.queue_free()
 	remaining_enemies = 0
@@ -118,7 +116,9 @@ func load_next_room():
 				var generated_level = generate_combat()
 				spawn_generated_room(generated_level)
 				update_data("PROCEDURAL")
+				Globals.dynamic_data = dynamic_data
 				SaveManagerV2.print_info()
+				SaveManagerV2.write_save(dynamic_data)
 				rooms_completed += 1
 				return
 			else:
@@ -135,8 +135,10 @@ func load_next_room():
 	room_scene = load(scene_path)
 	spawn_room(room_scene)
 	#print(player.current_room_scene_path)
-	update_data("scene_path")
+	update_data(scene_path)
+	Globals.dynamic_data = dynamic_data
 	SaveManagerV2.print_info()
+	SaveManagerV2.write_save(dynamic_data)
 	rooms_completed += 1
 
 func spawn_room(room_scene: PackedScene):

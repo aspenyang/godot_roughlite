@@ -82,4 +82,6 @@ func write_save(data: Dictionary) -> bool:
 	# Optional debug print; comment out if noisy
 	print("Saved slot %d -> %s (%d bytes)" % [slot, path, json_text.length()])
 	return true
-	
+
+func load_save():
+	var slot = Globals.slot
