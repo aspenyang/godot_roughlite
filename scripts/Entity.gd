@@ -16,7 +16,7 @@ func _ready():
 func _on_die():
 	die()
 	#print("%s died" % self.name)
-	queue_free()
+	#queue_free()
 
 func die():
 	#print("%s died" % self.name)

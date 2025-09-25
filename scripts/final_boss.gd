@@ -73,18 +73,19 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	var distance = global_position.distance_to(player.global_position)
-	var direction = Vector2.ZERO
-	if can_attack and distance <= moving_dist:
-		perform_attack()
-	if not is_attacking:
-		if distance >= moving_dist:
-			direction = (player.global_position - global_position).normalized()
-			
-		else:
-			direction = Vector2.ZERO
-		velocity = direction.normalized() * speed
-		move_and_slide()
+	if player:
+		var distance = global_position.distance_to(player.global_position)
+		var direction = Vector2.ZERO
+		if can_attack and distance <= moving_dist:
+			perform_attack()
+		if not is_attacking:
+			if distance >= moving_dist:
+				direction = (player.global_position - global_position).normalized()
+				
+			else:
+				direction = Vector2.ZERO
+			velocity = direction.normalized() * speed
+			move_and_slide()
 
 
 func perform_attack():
@@ -110,23 +111,24 @@ func perform_attack():
 
 
 func ranged_attack():
-	var ranged_points = [player.global_position]
-	print(ranged_points[0])
-	var ranged_instances = []
-	get_random_pos(ranged_points)
-	for pos in ranged_points:
-		var ranged_instance = RANGE_ATTACK.instantiate()
-		ranged_instance.position = pos
-		final_level.add_child(ranged_instance)
-		ranged_instances.append(ranged_instance)
-		active_ranged_attacks.append(ranged_instance)  # Track this instance
-	
-	await get_tree().create_timer(2.5).timeout
-	for instance in ranged_instances:
-		if is_instance_valid(instance):  # Check if instance still exists
-			instance.queue_free()
-			active_ranged_attacks.erase(instance)  # Remove from tracking
-	ranged_points.clear()
+	if player:
+		var ranged_points = [player.global_position]
+		print(ranged_points[0])
+		var ranged_instances = []
+		get_random_pos(ranged_points)
+		for pos in ranged_points:
+			var ranged_instance = RANGE_ATTACK.instantiate()
+			ranged_instance.position = pos
+			final_level.add_child(ranged_instance)
+			ranged_instances.append(ranged_instance)
+			active_ranged_attacks.append(ranged_instance)  # Track this instance
+		
+		await get_tree().create_timer(2.5).timeout
+		for instance in ranged_instances:
+			if is_instance_valid(instance):  # Check if instance still exists
+				instance.queue_free()
+				active_ranged_attacks.erase(instance)  # Remove from tracking
+		ranged_points.clear()
 		
 
 func fire_attack():
@@ -169,9 +171,30 @@ func die():
 		if is_instance_valid(instance):
 			instance.queue_free()
 	active_ranged_attacks.clear()
-
+	
+	update_data(true)
+	SaveManagerV2.write_save(Globals.dynamic_data)
+	
 	# Trigger ending transition (victory)
 	if final_level.has_method("show_ending"):
 		final_level.show_ending()
 
 	super.die()
+
+func update_data(died: bool):
+	if died:
+		Globals.dynamic_data["completed_runs"] += 1
+		Globals.dynamic_data["results"].append("1")
+		Globals.dynamic_data["in_progress"] = false
+		Globals.dynamic_data["levels_completed"] = 0
+		Globals.dynamic_data["maze_used"] = false
+		Globals.dynamic_data["reward_used"] = false
+		Globals.dynamic_data["miniboss_count"] = 0
+		Globals.dynamic_data["current_level"] = ""
+		Globals.dynamic_data["player_state"] = {
+			"current_health": player.max_health,
+			"max_health": player.max_health
+		}
+
+		
+	

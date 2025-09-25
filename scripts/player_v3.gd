@@ -198,7 +198,14 @@ func flash_hit():
 		await get_tree().create_timer(0.2).timeout
 		$Sprite2D.modulate = Color.WHITE
 
-func _on_die():
+#func _on_die():
+	#update_data(true)
+	#SaveManagerV2.write_save(Globals.dynamic_data)
+	#TransitionManager.show_death_transition()
+func die():
+	super.die()
+	update_data(true)
+	SaveManagerV2.write_save(Globals.dynamic_data)
 	TransitionManager.show_death_transition()
 
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
@@ -210,3 +217,20 @@ func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 func set_player_max_health(new_max_health):
 	max_health = new_max_health
 	
+func update_data(died: bool):
+	if died:
+		var completed = Globals.dynamic_data["levels_completed"]
+		var total = Globals.dynamic_data["levels_total"]
+		var runs = Globals.dynamic_data["completed_runs"]
+		Globals.dynamic_data["completed_runs"] = runs + 1
+		Globals.dynamic_data["results"].append("%d/%d"%[completed,total])
+		Globals.dynamic_data["in_progress"] = false
+		Globals.dynamic_data["levels_completed"] = 0
+		Globals.dynamic_data["maze_used"] = false
+		Globals.dynamic_data["reward_used"] = false
+		Globals.dynamic_data["miniboss_count"] = 0
+		Globals.dynamic_data["current_level"] = ""
+		Globals.dynamic_data["player_state"] = {
+			"current_health": max_health,
+			"max_health": max_health
+		}

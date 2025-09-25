@@ -42,6 +42,7 @@ func _ready():
 	else:
 		SaveManagerV2.load_save()
 		Globals.dynamic_data["loaded"] = true
+		Globals.dynamic_data["in_progress"] = true
 		dynamic_data = Globals.dynamic_data
 		rooms_completed = dynamic_data["levels_completed"]
 		var hp = dynamic_data["player_state"]["current_health"]
@@ -57,7 +58,7 @@ func fresh_data():
 		"slot": Globals.slot,
 		"completed_runs": 0,
 		"levels_total": TOTAL_ROOMS,
-		"last_result": "",
+		"results": [],
 		"in_progress": true,
 		"levels_completed": 0,
 		"maze_used": maze_used,
@@ -96,6 +97,7 @@ func load_next_room():
 		room_scene = load("res://scenes/rooms/final_level.tscn")
 		spawn_room(room_scene)
 		update_data("")
+		dynamic_data["loaded"] = false
 		Globals.dynamic_data = dynamic_data
 		SaveManagerV2.write_save(dynamic_data)
 		rooms_completed += 1
