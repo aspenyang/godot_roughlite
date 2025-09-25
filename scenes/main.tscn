@@ -5,9 +5,9 @@
 [ext_resource type="Texture2D" uid="uid://c13ntiv557bd7" path="res://assets/female_adventurer_Idle.png" id="2_sugp2"]
 [ext_resource type="Shape2D" uid="uid://cgs60oqox28sv" path="res://assets/collision_circle.tres" id="3_tbgi4"]
 [ext_resource type="Texture2D" uid="uid://b38qsv2gki4r4" path="res://assets/female_adventurer_walk.png" id="3_tefeu"]
-[ext_resource type="Script" uid="uid://cghlvogcr845a" path="res://scripts/room_manager_v4.gd" id="5_tbgi4"]
 [ext_resource type="PackedScene" uid="uid://l3qsmiu0ngpm" path="res://scenes/Player_Sword.tscn" id="6_o6xl0"]
 [ext_resource type="Script" uid="uid://kmm2pjwmkbvu" path="res://scripts/Health.gd" id="7_tipki"]
+[ext_resource type="Script" uid="uid://og875g1ycbhm" path="res://scripts/room_manager_v5.gd" id="8_tipki"]
 
 [sub_resource type="Animation" id="Animation_tipki"]
 length = 0.001
@@ -537,7 +537,7 @@ offset_bottom = 4.0
 show_percentage = false
 
 [node name="RoomManager" type="Node2D" parent="."]
-script = ExtResource("5_tbgi4")
+script = ExtResource("8_tipki")
 
 [node name="UI" type="CanvasLayer" parent="."]
 

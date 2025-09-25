@@ -1,5 +1,5 @@
 extends Node2D
-# This script follows the v3 version, for change the whole randomized system.
+# This script follows the v4 version, for save and load system.
 @onready var player = get_parent().get_node("Player")
 
 var current_room: Node = null
