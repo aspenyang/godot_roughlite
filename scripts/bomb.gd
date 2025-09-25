@@ -34,7 +34,7 @@ func _ready():
 	
 	# Start the fuse
 	fuse_timer.start()
-	print("Bomb armed at: ", global_position, " - exploding in ", fuse_time, " seconds")
+	#print("Bomb armed at: ", global_position, " - exploding in ", fuse_time, " seconds")
 
 func set_target(pos: Vector2):
 	target_pos = pos
@@ -60,7 +60,7 @@ func explode():
 		return
 	
 	is_exploded = true
-	print("BOOM! Explosion at: ", global_position)
+	#print("BOOM! Explosion at: ", global_position)
 	
 	# Hide hint circle
 	if hint_circle:
