@@ -23,7 +23,7 @@ func die():
 	queue_free()
 	
 func _on_health_changed(new_health: int):
-	print("%s health changed to %d" % [name, new_health])
+	#print("%s health changed to %d" % [name, new_health])
 	
 	# Update health bar
 	if health_bar:

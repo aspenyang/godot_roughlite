@@ -4,8 +4,7 @@ extends Node2D
 
 var current_room: Node = null
 var rooms_completed: int = 0
-#const TOTAL_ROOMS: int = 5 # set to 5 for testing. Originally set to 7 or 8
-var  total_rooms = Globals.TOTAL_ROOMS
+const TOTAL_ROOMS: int = 5 # set to 3 for testing. Originally set to 7 or 8
 
 var maze_used := false
 var reward_used := false
@@ -24,8 +23,8 @@ var miniboss_rooms := [
 # Room weights (out of 100)
 var room_weights := {
 	"combat": 20, #should be 60
-	"maze": 10, #should be 20
-	"reward": 10 #should be 20
+	"maze": 20, #should be 20
+	"reward": 20 #should be 20
 }
 
 # --- New vars for exit gating ---
@@ -41,7 +40,6 @@ func _on_room_completed():
 	load_next_room()
 
 func load_next_room():
-	SaveManagerV2.print_info()
 	if current_room:
 		current_room.queue_free()
 	remaining_enemies = 0
@@ -51,7 +49,7 @@ func load_next_room():
 	var room_scene: PackedScene
 
 	# Final boss room
-	if rooms_completed == total_rooms - 1:
+	if rooms_completed == TOTAL_ROOMS - 1:
 		room_scene = load("res://scenes/rooms/final_level.tscn")
 		spawn_room(room_scene)
 		rooms_completed += 1
@@ -196,7 +194,7 @@ func choose_next_room_type() -> String:
 func choose_combat_layout() -> String:
 	var level = rooms_completed + 1
 	var pool: Array[String] = []
-	var miniboss_allowed = level >= 3 and level <= total_rooms - 2 and miniboss_count < MAX_MINIBOSS
+	var miniboss_allowed = level >= 3 and level <= TOTAL_ROOMS - 2 and miniboss_count < MAX_MINIBOSS
 	if miniboss_allowed:
 		for i in range(2):
 			pool.append("PROCEDURAL")
@@ -314,6 +312,3 @@ func spawn_enemies_in_room(room: Node2D, enemy_pool: Array):
 		enemy.position = random_pos
 		spawn_positions.append(random_pos)
 		room.add_child(enemy)
-
-func set_completed_room(completed: int):
-	rooms_completed = completed

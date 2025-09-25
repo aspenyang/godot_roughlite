@@ -86,7 +86,7 @@ func set_current_room_scene(path: String) -> void:
 
 func set_current_scene(room_scene: Node):
 	current_scene = room_scene
-	print(current_scene)
+	#print(current_scene)
 
 func _physics_process(_delta):
 	var is_puzzle_scene = current_room_scene_path.ends_with("puzzle_path.tscn")
@@ -145,7 +145,7 @@ func handle_tile_movement(_delta):
 			
 			# --- New code here: notify room that player stepped on a tile ---
 			#var current_room = get_parent()
-			print(current_scene)
+			#print(current_scene)
 			var tilemap = current_scene.get_node("TileMap") as TileMap
 			var tile_pos = tilemap.local_to_map(global_position)
 			if current_scene.has_method("player_stepped"):

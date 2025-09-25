@@ -37,6 +37,10 @@ var current_exit_node: Node = null
 var exit_locked_for_combat := false
 
 func _ready():
+	if Globals.new_game:
+		fresh_data()
+	else:
+		pass
 	load_next_room()
 
 func fresh_data():
@@ -46,6 +50,7 @@ func fresh_data():
 	miniboss_count = 0
 	dynamic_data = {
 		"slot": Globals.slot,
+		"completed_runs": 0,
 		"levels_total": TOTAL_ROOMS,
 		"last_result": "",
 		"in_progress": true,
@@ -54,18 +59,27 @@ func fresh_data():
 		"reward_used": reward_used,
 		"miniboss_count": miniboss_count,
 		"current_level": "",
+		"loaded": false,
 		"player_state":  {
 			"current_health": player.max_health,
 			"max_health": player.max_health
 		}
 	}
+	
+func update_data(current_level):
+	dynamic_data["player_state"]["current_health"] = player.get_node("Health").current_health
+	dynamic_data["levels_completed"] = rooms_completed
+	dynamic_data["current_level"] = current_level
+	
 
 func _on_room_completed():
 	print("Room completed! Loading next room...")
 	load_next_room()
 
 func load_next_room():
-	SaveManagerV2.print_info()
+	#SaveManagerV2.print_info()
+	Globals.dynamic_data = dynamic_data
+	
 	if current_room:
 		current_room.queue_free()
 	remaining_enemies = 0
@@ -81,6 +95,18 @@ func load_next_room():
 		rooms_completed += 1
 		return
 
+	if dynamic_data["loaded"] and dynamic_data["current_level"] != "":
+		if dynamic_data["current_level"] == "PROCEDURAL":
+			var generated_level = generate_combat()
+			spawn_generated_room(generated_level)
+		else:
+			room_scene = load(dynamic_data["current_level"])
+			spawn_room(room_scene)
+		rooms_completed += 1
+		dynamic_data["loaded"] = false
+		return
+			
+		
 	var room_type = choose_next_room_type()
 	var scene_path = ""
 
@@ -91,6 +117,8 @@ func load_next_room():
 			if layout_choice == "PROCEDURAL":
 				var generated_level = generate_combat()
 				spawn_generated_room(generated_level)
+				update_data("PROCEDURAL")
+				SaveManagerV2.print_info()
 				rooms_completed += 1
 				return
 			else:
@@ -98,13 +126,17 @@ func load_next_room():
 		"maze":
 			scene_path = "res://scenes/rooms/maze.tscn"
 			maze_used = true
+			dynamic_data["maze_used"] = maze_used
 		"reward":
 			scene_path = "res://scenes/rooms/reward.tscn"
 			reward_used = true
+			dynamic_data["reward_used"] = reward_used
 
 	room_scene = load(scene_path)
 	spawn_room(room_scene)
-	print(player.current_room_scene_path)
+	#print(player.current_room_scene_path)
+	update_data("scene_path")
+	SaveManagerV2.print_info()
 	rooms_completed += 1
 
 func spawn_room(room_scene: PackedScene):
@@ -162,19 +194,22 @@ func spawn_generated_room(level_container: Node2D):
 
 # --- Enemy tracking & exit locking helpers ---
 func _setup_exit_lock_for_combat(room_root: Node, exit_node: Node):
+	# Defer scan so child rooms can finish _ready() and spawn their enemies
 	current_exit_node = exit_node
 	remaining_enemies = 0
 	exit_locked_for_combat = true
-	# Collect existing enemies
+	call_deferred("_deferred_enemy_scan", room_root, exit_node)
+
+func _deferred_enemy_scan(room_root: Node, exit_node: Node):
+	# Collect enemies after children have finished spawning
 	var enemies: Array = []
 	_collect_enemies(room_root, enemies)
 	for e in enemies:
 		_register_enemy(e)
-	# Lock exit if any enemies
-	if remaining_enemies > 0 and exit_node.has_method("set_exit_enabled"):
+	if remaining_enemies > 0 and exit_node and exit_node.has_method("set_exit_enabled"):
 		exit_node.set_exit_enabled(false)
 	else:
-		exit_locked_for_combat = false  # No enemies, keep it open
+		exit_locked_for_combat = false
 
 func _collect_enemies(node: Node, out_list: Array):
 	for c in node.get_children():
@@ -237,6 +272,7 @@ func choose_combat_layout() -> String:
 	var chosen = pool[randi() % pool.size()]
 	if miniboss_rooms.has(chosen):
 		miniboss_count += 1
+		dynamic_data["miniboss_count"] = miniboss_count
 	return chosen
 
 func add_to_set(set_array: Array, pos: Vector2):

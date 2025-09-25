@@ -25,8 +25,8 @@ var player: Node = null
 
 var new_game: bool = true
 var slot: int = 1
-const TOTAL_ROOMS: int = 5 #should be 7
- 
+#var total_rooms: int = 5 #should be 7
+var dynamic_data: Dictionary={} 
 
 #func get_dynamic_data() -> Dictionary:
 	#return {

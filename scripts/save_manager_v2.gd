@@ -30,7 +30,8 @@ func _process(delta: float) -> void:
 	pass
 
 func print_info():
-	print(Globals.player.get_node("Health").current_health)
+	print(Globals.dynamic_data)
+	#print(Globals.player.get_node("Health").current_health)
 
 # -- Minimal save-to-disk API --
 # RoomManager will build a Dictionary `data` and call write_save(data).
