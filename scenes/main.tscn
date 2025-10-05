@@ -552,4 +552,12 @@ offset_bottom = -23.0
 grow_vertical = 0
 show_percentage = false
 
+[node name="Back" type="Button" parent="UI"]
+offset_right = 149.0
+offset_bottom = 31.0
+size_flags_horizontal = 4
+size_flags_vertical = 0
+text = "Exit to Main Menu"
+
 [connection signal="animation_finished" from="Player/AnimationPlayer" to="Player" method="_on_animation_player_animation_finished"]
+[connection signal="pressed" from="UI/Back" to="." method="_on_back_pressed"]
