@@ -160,7 +160,7 @@ func generate_direct_path(start: Vector2i, goal: Vector2i) -> Array:
 		if path.size() > 1000:
 			print("Too long path!")
 			break
-	print(path)
+	#print(path)
 	return path if path[-1] == goal else []
 
 func get_neighbors(pos: Vector2i) -> Array:
@@ -243,16 +243,16 @@ func reset_player_position():
 		path_index = 0
 
 func player_stepped(tile_pos: Vector2i):
-	print(path[path_index], " ", tile_pos)
+	#print(path[path_index], " ", tile_pos)
 	if path_index + 1 < path.size() and tile_pos == path[path_index + 1]:
 		path_index += 1
-		print("Correct step:", tile_pos, "Progress:", path_index, "/", path.size())
+		#print("Correct step:", tile_pos, "Progress:", path_index, "/", path.size())
 		if path_index == path.size() - 1:
-			print("Player completed the path!")
+			#print("Player completed the path!")
 			if exit_door and exit_door.has_method("set_exit_enabled"):
 				exit_door.set_exit_enabled(true)
 	else:
-		print("Wrong tile! Resetting player.")
+		#print("Wrong tile! Resetting player.")
 		reset_player_position()
 
 

@@ -195,13 +195,6 @@ texture = ExtResource("3_byo5q")
 region_enabled = true
 region_rect = Rect2(77.7966, 0.541828, 21.9258, 23.7919)
 
-[node name="Label" type="Label" parent="."]
-offset_left = 2.0
-offset_top = 286.0
-offset_right = 44.0
-offset_bottom = 309.0
-text = "maze"
-
 [node name="HealthDrainTimer" type="Timer" parent="."]
 
 [connection signal="body_entered" from="Exit" to="Exit" method="_on_body_entered"]

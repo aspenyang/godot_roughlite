@@ -15,15 +15,15 @@ func _ready():
 
 func _on_die():
 	die()
-	print("%s died" % self.name)
-	queue_free()
+	#print("%s died" % self.name)
+	#queue_free()
 
 func die():
-	print("%s died" % self.name)
+	#print("%s died" % self.name)
 	queue_free()
 	
 func _on_health_changed(new_health: int):
-	print("%s health changed to %d" % [name, new_health])
+	#print("%s health changed to %d" % [name, new_health])
 	
 	# Update health bar
 	if health_bar:

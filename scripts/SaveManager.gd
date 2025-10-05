@@ -1,9 +1,9 @@
 extends Node
-class_name SaveManager
+#class_name SaveManager
 
 # ==============================================
 # SaveManager
-# Handles: slot files, checkpoints, round timing, run completion.
+# Handles: slot files, checkpoints, level timing, run completion.
 # Works for desktop + HTML5 (user:// mapped to OS / IndexedDB).
 #
 # Public Static API (summary):
@@ -11,15 +11,19 @@ class_name SaveManager
 #   load_game(slot) -> Dictionary
 #   save_game(slot, data) -> bool
 #   get_all_slots_info() -> Array
-#   get_default_data(slot_index, rounds_total=10) -> Dictionary
-#   upsert_and_save(slot, mutate_func: Callable, rounds_total=10) -> Dictionary
+#   get_default_data(slot_index, levels_total=10) -> Dictionary
+#   upsert_and_save(slot, mutate_func: Callable, levels_total=10) -> Dictionary
 #
 #   begin_level_if_needed(slot)
 #   complete_level_success(slot, final_level: bool)
 #   fail_level(slot, final_level: bool, policy_add_time := false)
 #   mark_interrupted(slot)
 #
+<<<<<<< HEAD
 #   set_checkpoint(slot, scene_path: String, level_id: int, levels_total := 10)
+=======
+#   set_checkpoint(slot, scene_path: String, level_id: int, player_state := {}, levels_total := 10)
+>>>>>>> save-load
 #   clear_checkpoint(slot)
 #   has_resume_checkpoint(slot) -> bool
 #
@@ -28,6 +32,7 @@ class_name SaveManager
 #
 # Data Shape (dictionary) JSON (pretty-printed):
 # {
+<<<<<<< HEAD
 #   "slot": 1,
 #   "version": 1,
 #   "runs_completed": 0,
@@ -46,6 +51,29 @@ class_name SaveManager
 #       "entered_unix_time": 0.0
 #   },
 #   "timestamp": "2025-09-25T10:00:00"
+=======
+#	"slot": 1,
+#	"version": 1,
+#	"levels_total": 10,
+#	"levels_completed": 0,
+#	"level_times": [],
+#	"current_level_start_time": 0.0,
+#	"last_result": "",
+#	"final_status": "in_progress",        # "in_progress" | "success" | "fail"
+#	"interrupted": false,
+#	"checkpoint": {                       # Present only if mid-run / at level entry
+#		"scene_path": "res://scenes/Level1.tscn",
+#		"level_id": 1,
+#		"entered_unix_time": 0.0,
+#		"player_state": {
+#			"hp": 50,
+#			"max_hp": 50,
+#			"inventory": [],                # optional future expansion
+#			"seed": 0                       # procedural seed, optional
+#		}
+#	},
+#	"timestamp": "",
+>>>>>>> save-load
 # }
 #
 # ==============================================
@@ -107,7 +135,10 @@ static func get_default_data(slot_index: int, levels_total: int = 10) -> Diction
 	return {
 		"slot": slot_index + 1,
 		"version": DATA_VERSION,
+<<<<<<< HEAD
 		"runs_completed": 0,
+=======
+>>>>>>> save-load
 		"levels_total": levels_total,
 		"levels_completed": 0,
 		"level_times": [],
@@ -131,7 +162,7 @@ static func upsert_and_save(slot: int, mutate_func: Callable, levels_total: int 
 	save_game(slot, data)
 	return data
 
-# -------------- Round Helpers --------------
+# -------------- level Helpers --------------
 
 static func begin_level_if_needed(slot: int) -> Dictionary:
 	return upsert_and_save(slot, func(d):
@@ -150,6 +181,10 @@ static func complete_level_success(slot: int, final_level: bool) -> Dictionary:
 			d["levels_completed"] = int(d.get("levels_completed", 0)) + 1
 		d["current_level_start_time"] = 0.0
 		d["last_result"] = "success"
+<<<<<<< HEAD
+=======
+		# Clear checkpoint because level finished
+>>>>>>> save-load
 		if d.has("checkpoint"):
 			d.erase("checkpoint")
 		if final_level:
@@ -166,6 +201,10 @@ static func fail_level(slot: int, final_level: bool, policy_add_time: bool = fal
 		if policy_add_time and start_time > 0.0:
 			var duration = _now() - start_time
 			d["level_times"].append(duration)
+<<<<<<< HEAD
+=======
+			# Usually don't increment levels_completed on failure
+>>>>>>> save-load
 		d["current_level_start_time"] = 0.0
 		d["last_result"] = "fail"
 		if final_level:
@@ -184,10 +223,16 @@ static func mark_interrupted(slot: int) -> Dictionary:
 
 # -------------- Checkpoint Management --------------
 
+<<<<<<< HEAD
 static func set_checkpoint(slot: int, scene_path: String, level_id: int, levels_total: int = 10) -> Dictionary:
 	return upsert_and_save(slot, func(d):
 		if d.get("levels_total", 0) != levels_total:
 			d["levels_total"] = levels_total
+=======
+static func set_checkpoint(slot: int, scene_path: String, level_id: int, player_state: Dictionary = {}, levels_total: int = 10) -> Dictionary:
+	return upsert_and_save(slot, func(d):
+		# Ensure level started
+>>>>>>> save-load
 		if d.get("current_level_start_time", 0.0) <= 0.0:
 			d["current_level_start_time"] = _now()
 		d["checkpoint"] = {
@@ -212,6 +257,10 @@ static func has_resume_checkpoint(slot: int) -> bool:
 		return false
 	if not d.has("checkpoint"):
 		return false
+<<<<<<< HEAD
+=======
+	# Optional: also require interrupted OR current_level_start_time > 0
+>>>>>>> save-load
 	return true
 
 # -------------- Player State Helpers --------------
@@ -260,7 +309,10 @@ static func _apply_defaults_and_migrate(d: Dictionary) -> Dictionary:
 	var required := {
 		"slot": 1,
 		"version": DATA_VERSION,
+<<<<<<< HEAD
 		"runs_completed": 0,
+=======
+>>>>>>> save-load
 		"levels_total": 10,
 		"levels_completed": 0,
 		"level_times": [],
@@ -276,7 +328,12 @@ static func _apply_defaults_and_migrate(d: Dictionary) -> Dictionary:
 	for k in required.keys():
 		if not d.has(k):
 			d[k] = required[k]
+<<<<<<< HEAD
 
+=======
+	
+	# Type normalizations
+>>>>>>> save-load
 	if typeof(d["level_times"]) != TYPE_ARRAY:
 		d["level_times"] = []
 	if typeof(d["checkpoint"]) != TYPE_DICTIONARY:
