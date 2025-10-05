@@ -26,9 +26,9 @@ var miniboss_rooms := [
 
 # Room weights (out of 100)
 var room_weights := {
-	"combat": 20, #should be 60
+	"combat": 10, #should be 60
 	"maze": 10, #should be 20
-	"reward": 10 #should be 20
+	"reward": 40 #should be 20
 }
 
 # --- New vars for exit gating ---
@@ -107,6 +107,7 @@ func load_next_room():
 		return
 
 	if dynamic_data["loaded"] and dynamic_data["current_level"] != "":
+		print("goes loaded branch")
 		dynamic_data["loaded"] = false
 		Globals.dynamic_data = dynamic_data
 		if dynamic_data["current_level"] == "PROCEDURAL":
