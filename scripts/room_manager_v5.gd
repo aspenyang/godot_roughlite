@@ -26,9 +26,9 @@ var miniboss_rooms := [
 
 # Room weights (out of 100)
 var room_weights := {
-	"combat": 10, #should be 60
-	"maze": 10, #should be 20
-	"reward": 40 #should be 20
+	"combat": 60, #should be 60
+	"maze": 20, #should be 20
+	"reward": 20 #should be 20
 }
 
 # --- New vars for exit gating ---

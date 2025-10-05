@@ -191,6 +191,7 @@ offset_bottom = 27.0
 text = "Press E"
 
 [node name="Label" type="Label" parent="."]
+visible = false
 offset_left = 1.0
 offset_top = 193.0
 offset_right = 124.0
