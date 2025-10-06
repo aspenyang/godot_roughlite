@@ -45,6 +45,8 @@ func _ready():
 		Globals.dynamic_data["in_progress"] = true
 		dynamic_data = Globals.dynamic_data
 		rooms_completed = dynamic_data["levels_completed"]
+		maze_used = dynamic_data["maze_used"]
+		reward_used = dynamic_data["reward_used"]
 		var hp = dynamic_data["player_state"]["current_health"]
 		player.get_node("Health").set_health(hp)
 		print("---  ", dynamic_data,"  ---")
@@ -92,9 +94,9 @@ func load_next_room():
 	exit_locked_for_combat = false
 	
 	var room_scene: PackedScene
+	print("room comp ", rooms_completed," level comp ", dynamic_data["levels_completed"])
 
 	# Final boss room
-	print("room comp ", rooms_completed," level comp ", dynamic_data["levels_completed"])
 	if rooms_completed == TOTAL_ROOMS - 1:
 		room_scene = load("res://scenes/rooms/final_level.tscn")
 		spawn_room(room_scene)
