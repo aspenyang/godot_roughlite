@@ -21,9 +21,6 @@ extends Node
 #
 <<<<<<< HEAD
 #   set_checkpoint(slot, scene_path: String, level_id: int, levels_total := 10)
-=======
-#   set_checkpoint(slot, scene_path: String, level_id: int, player_state := {}, levels_total := 10)
->>>>>>> save-load
 #   clear_checkpoint(slot)
 #   has_resume_checkpoint(slot) -> bool
 #
@@ -51,29 +48,6 @@ extends Node
 #       "entered_unix_time": 0.0
 #   },
 #   "timestamp": "2025-09-25T10:00:00"
-=======
-#	"slot": 1,
-#	"version": 1,
-#	"levels_total": 10,
-#	"levels_completed": 0,
-#	"level_times": [],
-#	"current_level_start_time": 0.0,
-#	"last_result": "",
-#	"final_status": "in_progress",        # "in_progress" | "success" | "fail"
-#	"interrupted": false,
-#	"checkpoint": {                       # Present only if mid-run / at level entry
-#		"scene_path": "res://scenes/Level1.tscn",
-#		"level_id": 1,
-#		"entered_unix_time": 0.0,
-#		"player_state": {
-#			"hp": 50,
-#			"max_hp": 50,
-#			"inventory": [],                # optional future expansion
-#			"seed": 0                       # procedural seed, optional
-#		}
-#	},
-#	"timestamp": "",
->>>>>>> save-load
 # }
 #
 # ==============================================
