@@ -58,7 +58,7 @@ At the Main Menu select a save slot:
   - usage flags (maze_used, reward_used)
 
 ## Run
-- Windows: A prebuilt executable is in the `export` folder. Download/extract and double‑click the `.exe` to launch.
+> Windows: A prebuilt executable is in the `export` folder. Download/extract and double‑click the `.exe` to launch.
 1. Install Godot 4.4.
 2. Open the project folder (contains `project.godot`).
 3. Press F5.
