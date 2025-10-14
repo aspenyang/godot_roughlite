@@ -14,7 +14,6 @@ Minimal Godot 4.4 roguelite prototype.
 - `addons/godot-git-plugin/` VCS plugin.
 - `assets/` Art / resources.
 - `export/` Built artifacts.
-- `save/` Runtime generated save data.
 
 ## Gameplay
 
