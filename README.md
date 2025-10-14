@@ -1,10 +1,6 @@
 
 Minimal Godot 4.4 roguelite prototype.
 
-## Overview
-Main scene UID: `run/main_scene="uid://dfhcmmbuaxgg8"`. Procedural room graph (see `scenes/rooms/level_map.tscn`). Progression & saves handled by the autoload `save_manager_v2.gd`.
-
-
 ## Features
 - Procedural room connectivity with multiple room archetypes.
 - Player / enemies / weapons scripts in `scripts/`.
